@@ -15,7 +15,19 @@ function Doubts() {
   const [assignmentTitle, setAssignmentTitle] = useState('');
   const [resolved, setResolved] = useState('');
 
+
+  const params = {
+    status: 'replied',           // or 'new', 'unsatisfied', 'resolved'
+    timeframe: 'today',          // or 'tomorrow'
+    page: 1,
+    limit: 10,
+    assignmentTitle: 'array',    // optional search by assignment title
+    difficulty: 'easy',          // optional
+  };
+  
+
   // Function to fetch filtered doubts.
+
   const fetchFilteredDoubts = async () => {
     try {
       const res = await api.get('/doubts/filter-doubts', {
@@ -32,6 +44,9 @@ function Doubts() {
       toast.error('Failed to fetch filtered doubts.');
     }
   };
+
+
+
   
 
   // For mentors/admins we use the filter endpoint; for students, you may wish to use the simpler GET route
@@ -40,11 +55,13 @@ function Doubts() {
       // For mentors and admins, we always call the filter endpoint.
       if (auth.user.role === 'mentor' || auth.user.role === 'admin') {
         fetchFilteredDoubts();
-      } else if (auth.user.role === 'student') {
+      } else if (auth.user.role === 'student' || auth.user.role === 'volunteer') {
         // For students, fetch only their doubts.
         const fetchMyDoubts = async () => {
           try {
+            console.log("trying to fetch your doubts")
             const res = await api.get('/doubts');
+            console.log("All doubts are",res.data)
             setDoubts(res.data);
           } catch (err) {
             console.error(err);
@@ -54,6 +71,9 @@ function Doubts() {
         fetchMyDoubts();
       }
     }
+
+    console.log("Hii in doubt page")
+
     // We want to re-run filtering when filter values change for mentors/admins.
   }, [auth, assignmentTag, difficulty, assignmentTitle, resolved]);
 
