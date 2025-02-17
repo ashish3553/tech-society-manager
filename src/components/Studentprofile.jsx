@@ -12,52 +12,54 @@ function StudentProfile() {
     pendingPersonal: 0
   });
 
-  useEffect(() => {
-    // Fetch both public and personal assignments for the logged-in student
-    const fetchCounters = async () => {
-      try {
-        const publicRes = await api.get('/assignments', { params: { category: 'public' } });
-        const personalRes = await api.get('/assignments/personal');
-        const allAssignments = [...publicRes.data, ...personalRes.data];
-        let totalSolved = 0;
-        let pendingHW = 0;
-        let pendingCW = 0;
-        let pendingPersonal = 0;
-        const studentId = auth.user.id;
-        
-        allAssignments.forEach((assignment) => {
-          // Find the student's response in the assignment's responses array
-          const response = assignment.responses.find(
-            (resp) => resp.student.toString() === studentId
-          );
-          const isSolved = response && response.responseStatus === 'solved';
-          if (isSolved) {
-            totalSolved++;
-          } else {
-            // Count pending by assignment tag if not solved
-            if (assignment.assignmentTag === 'HW') {
-              pendingHW++;
-            }
-            if (assignment.assignmentTag === 'CW') {
-              pendingCW++;
-            }
-            // For personal assignments, count pending even if the assignment tag might be different
-            if (assignment.category === 'personal') {
-              pendingPersonal++;
-            }
-          }
-        });
-        
-        setCounters({ totalSolved, pendingHW, pendingCW, pendingPersonal });
-      } catch (err) {
-        console.error(err);
-      }
-    };
 
-    if (auth && auth.user) {
-      fetchCounters();
-    }
-  }, [auth]);
+  // This fetch counter will be applied letter
+  // useEffect(() => {
+  //   // Fetch both public and personal assignments for the logged-in student
+  //   const fetchCounters = async () => {
+  //     try {
+  //       const publicRes = await api.get('/assignments', { params: { category: 'public' } });
+  //       const personalRes = await api.get('/assignments/personal');
+  //       const allAssignments = [...publicRes.data, ...personalRes.data];
+  //       let totalSolved = 0;
+  //       let pendingHW = 0;
+  //       let pendingCW = 0;
+  //       let pendingPersonal = 0;
+  //       const studentId = auth.user.id;
+        
+  //       allAssignments.forEach((assignment) => {
+  //         // Find the student's response in the assignment's responses array
+  //         const response = assignment.responses.find(
+  //           (resp) => resp.student.toString() === studentId
+  //         );
+  //         const isSolved = response && response.responseStatus === 'solved';
+  //         if (isSolved) {
+  //           totalSolved++;
+  //         } else {
+  //           // Count pending by assignment tag if not solved
+  //           if (assignment.assignmentTag === 'HW') {
+  //             pendingHW++;
+  //           }
+  //           if (assignment.assignmentTag === 'CW') {
+  //             pendingCW++;
+  //           }
+  //           // For personal assignments, count pending even if the assignment tag might be different
+  //           if (assignment.category === 'personal') {
+  //             pendingPersonal++;
+  //           }
+  //         }
+  //       });
+        
+  //       setCounters({ totalSolved, pendingHW, pendingCW, pendingPersonal });
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+
+  //   if (auth && auth.user) {
+  //     fetchCounters();
+  //   }
+  // }, [auth]);
 
   if (!auth || !auth.user) return null;
   const { user } = auth;

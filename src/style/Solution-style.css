@@ -1,0 +1,81 @@
+/* public/styles/solution-styles.css */
+
+.solution-content {
+    position: relative;
+    /* width: 1000px;    match Editor's width */
+    min-height: 600px;  
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Basic text, images, headings */
+.solution-content p {
+    margin-bottom: 1em;
+}
+
+/* For images: remove centering so inline left/top are honored */
+.solution-content img {
+    max-width: 100%;
+    display: inline-block;
+    margin: 10px 0;
+    cursor: zoom-in;            /* show zoom-in cursor */
+    transition: transform 0.3s ease;
+}
+
+/* When zoomed, scale the image */
+.solution-content img.zoomed {
+    transform: scale(2);        /* adjust scale factor as needed */
+    cursor: zoom-out;
+}
+
+/* Draggable text box from the editor */
+.solution-content .movable-text {
+    position: absolute;
+    border: 1px dashed #999;
+    background: #ffff88;
+    resize: both;
+    overflow: auto;
+    min-width: 60px;
+    min-height: 40px;
+}
+
+.solution-content .movable-text-handle {
+    background: #ccc;
+    height: 22px;
+    cursor: move;
+    user-select: none;
+    font-size: 12px;
+    border-bottom: 1px solid #999;
+    padding: 0 4px;
+}
+
+/* Code blocks */
+.solution-content pre {
+    background: #000;
+    color: #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    overflow: auto;
+    white-space: pre-wrap;
+    margin-bottom: 1em;
+}
+
+.solution-content pre code {
+    background: transparent;
+    color: #ddd;
+}
+
+/* Resizing handle for images (if needed in editor) */
+.solution-content .custom-resize-handle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #000;
+    border-radius: 50%;
+    cursor: se-resize;
+    z-index: 10;
+}

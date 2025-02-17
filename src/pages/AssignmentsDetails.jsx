@@ -1,12 +1,20 @@
 // src/pages/AssignmentDetails.jsx
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
+import AssignmentDisplay from '../components/AssignmentDisplay';
+import AssignmentEditForm from '../components/AssignmentEditForm';
+import StudentResponseForm from '../components/StudentResponseForm';
+import MentorActions from '../components/MentorAction';
+import MentorSolutionSection from '../components/MentorSolutionSection';
+import StudentSolutionSection from '../components/StudentSolutionSection';
+
 function AssignmentDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { auth } = useContext(AuthContext);
   const [assignment, setAssignment] = useState(null);
   const [responseData, setResponseData] = useState({
@@ -14,18 +22,41 @@ function AssignmentDetails() {
     submissionUrl: '',
     learningNotes: ''
   });
-  const [solutionText, setSolutionText] = useState('');
-console.log("Auth is", auth);
+  const [solutionContent, setSolutionContent] = useState('');
+  const [editingSolution, setEditingSolution] = useState(false);
+  const [isEditingAssignment, setIsEditingAssignment] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [showPersonalInput, setShowPersonalInput] = useState(false);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  
+  // Control inline solution display for student
+  const [showSolutionInline, setShowSolutionInline] = useState(false);
+  const solutionRef = useRef(null); // Ref for solution section
+
+
   const isMentor = auth && (auth.user.role === 'mentor' || auth.user.role === 'admin');
   const canRespond = auth && (auth.user.role === 'student' || auth.user.role === 'volunteer');
 
-  // Fetch assignment details on mount.
+  // Fetch assignment details
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
+        console.log("Trying to get assignment details:")
         const res = await api.get(`/assignments/${id}`);
-        console.log("current data is:", res.data)
+        console.log("Here is details: ", res.data)
         setAssignment(res.data);
+        setSolutionContent(res.data.solution || '');
+        setEditData({
+          title: res.data.title,
+          explanation: res.data.explanation,
+          testCases: JSON.stringify(res.data.testCases || [], null, 2),
+          tags: res.data.tags ? res.data.tags.join(', ') : '',
+          repoCategory: res.data.repoCategory,
+          questionType: res.data.questionType,
+          majorTopic: res.data.majorTopic,
+          similarQuestions: JSON.stringify(res.data.similarQuestions || [], null, 2),
+          codingPlatformLink: res.data.codingPlatformLink
+        });
       } catch (err) {
         console.error(err);
         toast.error('Failed to load assignment details.');
@@ -34,12 +65,11 @@ console.log("Auth is", auth);
     fetchAssignment();
   }, [id]);
 
-  // Once assignment details are fetched, preload the student's previous response if available.
+  // Preload student response if available
   useEffect(() => {
     if (assignment && auth && auth.user && assignment.responses) {
       const currentUserId = auth.user.id;
       const found = assignment.responses.find((resp) => {
-        // If resp.student is populated as an object, use its _id; otherwise, use resp.student.
         const studentId =
           typeof resp.student === 'object' && resp.student !== null && resp.student._id
             ? String(resp.student._id)
@@ -47,14 +77,12 @@ console.log("Auth is", auth);
         return studentId === String(currentUserId);
       });
       if (found) {
-        // Preload the response fields from the found response.
         setResponseData({
           responseStatus: found.responseStatus || '',
           submissionUrl: found.submissionUrl || '',
           learningNotes: found.learningNotes || ''
         });
       } else {
-        // If no response is found, you may choose to default to "not attempted" or leave blank.
         setResponseData({
           responseStatus: 'not attempted',
           submissionUrl: '',
@@ -64,13 +92,12 @@ console.log("Auth is", auth);
     }
   }, [assignment, auth]);
 
+  // Handler for student response submission
   const handleResponseSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Update the student's response on the backend.
       await api.put(`/assignments/${id}/status`, responseData);
       toast.success('Response updated successfully!');
-      // Re-fetch the assignment details to update the UI.
       const res = await api.get(`/assignments/${id}`);
       setAssignment(res.data);
     } catch (err) {
@@ -79,19 +106,44 @@ console.log("Auth is", auth);
     }
   };
 
-  const handleSolutionSubmit = async (e) => {
+
+    // Fetch the solution from your API
+    useEffect(() => {
+      const fetchSolution = async () => {
+        try {
+          console.log("Fetching mentor page solution")
+          const res = await api.get(`/assignments/${id}/solution`);
+          console.log("Found mentor page solution", res.data)
+  
+          setSolutionContent(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchSolution();
+    }, [id]);
+
+
+    useEffect(() => {
+      if (showSolutionInline && solutionRef.current) {
+        solutionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, [showSolutionInline]);
+
+  // Handler for updating solution (mentor)
+  const handleSolutionUpdate = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/assignments/${id}/solution`, { solution: solutionText });
+      await api.put(`/assignments/${id}/solution`, { solution: solutionContent });
       toast.success('Solution updated successfully!');
-      setSolutionText('');
-      // Optionally, re-fetch assignment details to update the UI.
+      setEditingSolution(false);
     } catch (err) {
       console.error(err);
       toast.error('Failed to update solution.');
     }
   };
 
+  // Toggle solution visibility (mentor)
   const handleToggleSolutionVisibility = async () => {
     try {
       const newVisibility = !assignment.solutionVisible;
@@ -104,154 +156,102 @@ console.log("Auth is", auth);
     }
   };
 
-  if (!assignment)
+  // Handler for saving edited assignment details (mentor)
+  const handleAssignmentEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatePayload = {
+        ...editData,
+        tags: editData.tags.split(',').map(t => t.trim())
+      };
+      const res = await api.put(`/assignments/${id}`, updatePayload);
+      setAssignment(res.data);
+      setIsEditingAssignment(false);
+      toast.success('Assignment updated successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update assignment.');
+    }
+  };
+
+  // Handler for assigning personally (mentor)
+  const handleAssignPersonal = async () => {
+    if (selectedStudents.length === 0) {
+      toast.error('Please select at least one student.');
+      return;
+    }
+    try {
+      const res = await api.put(`/assignments/${id}/assign-personal`, { assignedTo: selectedStudents });
+      setAssignment(res.data);
+      setShowPersonalInput(false);
+      toast.success('Assignment updated with personal assignees!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to assign personally.');
+    }
+  };
+
+  if (!assignment) {
     return <p className="text-center text-gray-500">Loading assignment details...</p>;
+  }
+
+  const displayDate = new Date(assignment.updatedAt || assignment.createdAt).toLocaleString('en-IN');
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      {/* Assignment Details */}
-      <div className="bg-white rounded shadow p-6">
-        <h2 className="text-3xl font-bold mb-4">{assignment.title}</h2>
-        <div className="mb-4">
-          <h3 className="text-2xl font-semibold mb-2">Explanation</h3>
-          <div className="prose" dangerouslySetInnerHTML={{ __html: assignment.explanation }} />
-        </div>
-        {assignment.testCases && assignment.testCases.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Test Cases</h3>
-            <ul className="list-disc list-inside">
-              {assignment.testCases.map((tc, idx) => (
-                <li key={idx}>{tc}</li>
-              ))}
-            </ul>
+      {/* Merged block: Assignment display and student response side by side */}
+      {canRespond ? (
+        <div className="border rounded-lg shadow p-4 md:flex md:items-stretch">
+          <div className="md:w-2/3 border-r md:pr-4">
+            <AssignmentDisplay assignment={assignment} />
           </div>
-        )}
-        {assignment.files && assignment.files.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Attachments</h3>
-            <div className="flex flex-wrap gap-4">
-              {assignment.files.map((fileUrl, idx) => (
-                <a key={idx} href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  View File {idx + 1}
-                </a>
-              ))}
+          <div className="md:w-1/3 md:pl-4">
+            <div className="bg-white rounded p-4 h-full">
+              <h3 className="text-2xl font-bold mb-4">Your Response</h3>
+              <StudentResponseForm 
+                assignmentId={id}
+                responseData={responseData} 
+                setResponseData={setResponseData} 
+                onSubmit={handleResponseSubmit} 
+                solution_content={solutionContent || {}} // Pass solution object
+                showSolution={showSolutionInline}           // Parent state
+                setShowSolution={setShowSolutionInline}            // Parent's state controlling solution visibility
+                
+              />
             </div>
           </div>
-        )}
-        {assignment.codingPlatformLink && (
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Coding Platform</h3>
-            <a href={assignment.codingPlatformLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Visit Coding Platform
-            </a>
-          </div>
-        )}
-        {assignment.solution && (
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">Solution</h3>
-            {assignment.solutionVisible ? (
-              <p>{assignment.solution}</p>
-            ) : (
-              <p className="text-gray-500 italic">Solution is hidden by the admin.</p>
-            )}
-            {isMentor && (
-              <div className="mt-2">
-                <button 
-                  onClick={handleToggleSolutionVisibility} 
-                  className="bg-blue-600 text-white py-1 px-2 rounded"
-                >
-                  {assignment.solutionVisible ? 'Hide Solution' : 'Show Solution'}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-        {assignment.assignedBy && (
-          <div className="text-gray-600">
-            <p><strong>Uploaded By:</strong> {assignment.assignedBy.name}</p>
-            <p><strong>Mentor Branch:</strong> {assignment.assignedBy.branch || 'N/A'}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Student Response Form */}
-      {canRespond && (
-        <div className="bg-white rounded shadow p-6">
-          <h3 className="text-2xl font-bold mb-4">Your Response</h3>
-          <form onSubmit={handleResponseSubmit} className="space-y-4">
-            <div>
-              <label className="block font-medium mb-1">Update Your Status:</label>
-              <select 
-                value={responseData.responseStatus}
-                onChange={(e) => setResponseData({ ...responseData, responseStatus: e.target.value })}
-                className="w-full border rounded p-2"
-                required
-              >
-                <option value="">Select status</option>
-                <option value="solved">Solved</option>
-                <option value="partially solved">Partially Solved</option>
-                <option value="not understanding">Not Understanding</option>
-                <option value="having doubt">Having Doubt</option>
-              </select>
-            </div>
-            {responseData.responseStatus === 'solved' && (
-              <div>
-                <label className="block font-medium mb-1">Submission URL (Proof):</label>
-                <input 
-                  type="text"
-                  value={responseData.submissionUrl}
-                  onChange={(e) => setResponseData({ ...responseData, submissionUrl: e.target.value })}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </div>
-            )}
-            {responseData.responseStatus && responseData.responseStatus !== 'solved' && (
-              <div>
-                <label className="block font-medium mb-1">Describe Your Problem:</label>
-                <textarea 
-                  value={responseData.learningNotes}
-                  onChange={(e) => setResponseData({ ...responseData, learningNotes: e.target.value })}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </div>
-            )}
-            {responseData.responseStatus === 'solved' && (
-              <div>
-                <label className="block font-medium mb-1">Optional Learning Notes:</label>
-                <textarea 
-                  value={responseData.learningNotes}
-                  onChange={(e) => setResponseData({ ...responseData, learningNotes: e.target.value })}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-            )}
-            <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-              Update Response
-            </button>
-          </form>
         </div>
+      ) : (
+        <AssignmentDisplay assignment={assignment} />
       )}
 
-      {/* Mentor Solution Option */}
+      {/* Full-width solution section below the merged block */}
+      {canRespond && showSolutionInline && (
+        <StudentSolutionSection assignmentId={id} />
+      )}
+
       {isMentor && (
-        <div className="bg-white rounded shadow p-6">
-          <h3 className="text-2xl font-bold mb-4">Add / Update Solution</h3>
-          <form onSubmit={handleSolutionSubmit} className="space-y-4">
-            <textarea 
-              name="solution"
-              placeholder="Enter solution here..."
-              className="w-full border rounded p-2"
-              required
-              value={solutionText}
-              onChange={(e) => setSolutionText(e.target.value)}
-            />
-            <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-              Update Solution
-            </button>
-          </form>
-        </div>
+        <MentorActions 
+          displayDate={displayDate}
+          setIsEditingAssignment={setIsEditingAssignment}
+          showPersonalInput={showPersonalInput}
+          setShowPersonalInput={setShowPersonalInput}
+          selectedStudents={selectedStudents}
+          setSelectedStudents={setSelectedStudents}
+          handleAssignPersonal={handleAssignPersonal}
+        />
+      )}
+
+      {isMentor && (
+        <MentorSolutionSection
+          assignment={assignment}
+          solutionContent={solutionContent}
+          editingSolution={editingSolution}
+          setEditingSolution={setEditingSolution}
+          setSolutionContent={setSolutionContent}
+          handleSolutionUpdate={handleSolutionUpdate}
+          handleToggleSolutionVisibility={handleToggleSolutionVisibility}
+        />
       )}
     </div>
   );

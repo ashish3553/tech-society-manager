@@ -57,7 +57,7 @@ function StudentMessageForm({ onClose }) {
   // Handler for confirming the selection in the dropdown
   const confirmRecipients = () => {
     setShowRecipientsDropdown(false);
-    // toast.success('Recipients selected.');
+    toast.success('Recipients selected.');
   };
 
   const handleSubmit = async (e) => {
@@ -76,6 +76,8 @@ function StudentMessageForm({ onClose }) {
           ? messageData.links.split(',').map((link) => link.trim()).filter((link) => link)
           : []
       };
+
+      console.log("Sending message to :", payload);
       await api.post('/messages', payload);
       toast.success('Message sent successfully!');
       setMessageData({

@@ -36,9 +36,9 @@ function Header() {
                 <li>
                   <Link to="/dashboard" className="hover:underline">Dashboard</Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link to="/assignments" className="hover:underline">Assignments</Link>
-                </li>
+                </li> */}
                 <li>
                   <Link to="/doubts" className="hover:underline">Doubts</Link>
                 </li>
@@ -64,7 +64,7 @@ function Header() {
                   </li>
                 )}
                 <li>
-                  <Link to="/assignments" className="hover:underline">Assignments</Link>
+                  <Link to="/resourse" className="hover:underline">Resourse</Link>
                 </li>
                 <li>
                   <Link to="/doubts" className="hover:underline">Doubts</Link>
@@ -73,7 +73,7 @@ function Header() {
                   <Link to="/practice" className="hover:underline">Practice</Link>
                 </li>
                 <li>
-                  <Link to="/briefings/archive" className="hover:underline">Previous Briefings</Link>
+                  <Link to="/briefings/archive" className="hover:underline"> Briefings</Link>
                 </li>
                 {role === 'admin' && (
                   <li>

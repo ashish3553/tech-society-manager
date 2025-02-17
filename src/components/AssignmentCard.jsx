@@ -1,16 +1,27 @@
 // src/components/AssignmentCard.jsx
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 
-function AssignmentCard({ assignment, onUpdate, onDelete }) {
+function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
   const { auth } = useContext(AuthContext);
   const currentUserId = auth?.user?.id;
   const currentUserRole = auth?.user?.role;
 
-  console.log("Assigned by " ,assignment)
-  // Default student response if not found.
-  let studentResponse = { responseStatus: 'not attempted' };
+  // Local state for distribution tag (optimistic update)
+  const [localTag, setLocalTag] = useState(assignment.distributionTag);
+  // State for modal confirmation and pending tag update
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingTag, setPendingTag] = useState('');
+
+  // When the assignment prop changes, update localTag
+  useEffect(() => {
+    setLocalTag(assignment.distributionTag);
+  }, [assignment.distributionTag]);
+
+  // Determine student's response (for student view)
+  let studentResponse = { responseStatus: 'Unattempted' };
   if (currentUserId && assignment.responses && assignment.responses.length > 0) {
     const found = assignment.responses.find((resp) => {
       const studentId =
@@ -21,7 +32,7 @@ function AssignmentCard({ assignment, onUpdate, onDelete }) {
     });
     if (found) {
       studentResponse = {
-        responseStatus: found.responseStatus || 'not attempted',
+        responseStatus: found.responseStatus || 'Unattempted',
         learningNotes: found.learningNotes || '',
         submissionUrl: found.submissionUrl || '',
         screenshots: found.screenshots || []
@@ -29,21 +40,28 @@ function AssignmentCard({ assignment, onUpdate, onDelete }) {
     }
   }
 
-  // Function to choose badge color for the assignment tag
-  const getAssignmentTagColor = (tag) => {
+  // Helper: get badge color based on distribution tag.
+  const getBadgeColor = (tag) => {
     switch (tag.toLowerCase()) {
+      case 'central':
+        return 'bg-gray-600';
       case 'hw':
         return 'bg-red-500';
       case 'cw':
         return 'bg-yellow-500';
+      case 'pw':
       case 'practice':
         return 'bg-blue-500';
+      case 'hm':
+        return 'bg-purple-500';
+      case 'personal':
+        return 'bg-green-500';
       default:
         return 'bg-gray-500';
     }
   };
 
-  // Function to choose response badge color based on status
+  // Helper: response badge color.
   const getResponseBadgeColor = (status) => {
     switch (status) {
       case 'solved':
@@ -59,50 +77,50 @@ function AssignmentCard({ assignment, onUpdate, onDelete }) {
     }
   };
 
-  // Compute display date: choose updatedAt if it exists and is later than createdAt.
+  // Compute display date (prefer updatedAt over createdAt if available)
   const createdDate = assignment.createdAt ? new Date(assignment.createdAt) : null;
   const updatedDate = assignment.updatedAt ? new Date(assignment.updatedAt) : null;
   const displayDate = updatedDate && updatedDate > createdDate ? updatedDate : createdDate;
   const formattedDate = displayDate ? displayDate.toLocaleString('en-IN') : '';
 
-  // Determine mentor (poster) info:
-  // If assignment.assignedBy is provided, use that; otherwise, fall back to createdBy/updatedBy.
-  let mentorInfo = assignment.assignedBy;
-  console.log("mentor info is:", mentorInfo)
-  if (!mentorInfo && (assignment.updatedBy || assignment.createdBy)) {
-    mentorInfo = assignment.updatedBy || assignment.createdBy;
-    console.log("Now mentor info is:",mentorInfo)
-  }
+  // Mentor tracking info
+  const creator = assignment.createdBy;
+  const modifier = assignment.lastModifiedBy;
+
+  // Optimistic UI update: call this function to update distribution tag after confirmation.
+  const updateTag = async (newTag) => {
+    const previousTag = localTag;
+    setLocalTag(newTag);
+    try {
+      await api.put(`/assignments/${assignment._id}/distribution`, { distributionTag: newTag });
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      console.error("Error updating distribution tag:", error);
+      setLocalTag(previousTag);
+    }
+  };
+
+  // Handler when a tag button is clicked
+  const handleTagClick = (tag) => {
+    // Set pending tag and open confirmation modal
+    setPendingTag(tag);
+    setShowConfirmModal(true);
+  };
+
+  // When mentor confirms modal
+  const confirmTagChange = () => {
+    updateTag(pendingTag);
+    setShowConfirmModal(false);
+  };
+
+  // When mentor cancels modal
+  const cancelTagChange = () => {
+    setShowConfirmModal(false);
+    setPendingTag('');
+  };
 
   return (
-    <div className="relative bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 p-6 flex flex-col">
-      {/* Assignment Tag Sticker */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-        <span className={`px-3 py-1 text-sm font-bold text-white ${getAssignmentTagColor(assignment.assignmentTag)}`}>
-          {assignment.assignmentTag.toUpperCase()}
-        </span>
-      </div>
-
-      {/* Update/Delete Buttons for Mentor/Admin */}
-      {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
-        <div className="absolute top-2 right-4 flex gap-2">
-          <button
-            onClick={() => onUpdate && onUpdate(assignment)}
-            className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600"
-          >
-            Update
-          </button>
-          {currentUserRole === 'admin' && (
-            <button
-              onClick={() => onDelete && onDelete(assignment._id)}
-              className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
-            >
-              Delete
-            </button>
-          )}
-        </div>
-      )}
-
+    <div className="relative bg-white border border-gray-200 rounded-lg shadow-lg transition-shadow duration-300 p-6 flex flex-col">
       {/* Main Content */}
       <div className="space-y-3">
         <h2 className="text-2xl font-extrabold text-indigo-700">{assignment.title}</h2>
@@ -114,32 +132,102 @@ function AssignmentCard({ assignment, onUpdate, onDelete }) {
         <p className="text-sm text-gray-600">
           <strong>Difficulty:</strong> {assignment.difficulty}
         </p>
-        {/* Display mentor info for all users when available */}
-
-        {console.log(mentorInfo, "this ine")}
-        {mentorInfo ? (
-  <div className="text-sm text-gray-600">
-    <strong>Mentor:</strong> {mentorInfo.name} ({mentorInfo.role || 'N/A'})
-    
-    
-  </div>
-) : (
-  <p className="text-sm text-gray-600">No mentor info available.</p>
-)}
+        {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
+          <div className="text-sm text-gray-600">
+            {creator && (
+              <p>
+                <strong>Created by:</strong> {creator.name} ({creator.role})
+              </p>
+            )}
+            {creator &&
+              modifier &&
+              creator._id &&
+              modifier._id &&
+              modifier._id.toString() !== creator._id.toString() && (
+                <p>
+                  <strong>Last Edited by:</strong> {modifier.name} ({modifier.role})
+                </p>
+              )}
+          </div>
+        )}
       </div>
 
-      {/* Sticky Footer */}
-      <div className="mt-auto border-t pt-3 flex flex-col sm:flex-row items-center justify-between">
-        <Link to={`/assignments/${assignment._id}`} className="text-indigo-600 font-semibold hover:underline">
+      {/* Distribution Buttons for Mentor/Admin */}
+      {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
+        <div className="mt-4 flex justify-around">
+          <button
+            type="button"
+            onClick={() => handleTagClick('hw')}
+            className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+          >
+            HW
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTagClick('practice')}
+            className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+          >
+            Practice
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTagClick('cw')}
+            className="bg-yellow-500 text-white px-3 py-1 rounded text-xs hover:bg-yellow-600"
+          >
+            CW
+          </button>
+        </div>
+      )}
+
+      {/* Footer Row */}
+      <div className="mt-2 flex items-center justify-between border-t pt-2">
+        <Link
+          to={`/assignments/${assignment._id}`}
+          className="bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700"
+        >
           View Details
         </Link>
         <div className="flex items-center gap-2">
-          <span className={`text-white text-xs px-2 py-1 rounded ${getResponseBadgeColor(studentResponse.responseStatus)}`}>
-            {studentResponse.responseStatus}
+          {currentUserRole === 'student' && (
+            <span className={`text-white text-xs px-2 py-1 rounded ${getResponseBadgeColor(studentResponse.responseStatus)}`}>
+              {studentResponse.responseStatus}
+            </span>
+          )}
+          <span className={`px-3 py-1 text-sm font-bold text-white ${getBadgeColor(localTag)}`}>
+            {localTag.toUpperCase()}
           </span>
-          <span className="text-gray-500 text-xs">{formattedDate}</span>
         </div>
       </div>
+
+      {/* Confirmation Modal for Tag Change */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded p-6 w-80">
+            <h2 className="text-xl font-bold mb-4">
+              Confirm Tag Change
+            </h2>
+            <p className="mb-4">
+              Are you sure you want to mark this assignment as <span className="font-semibold">{pendingTag.toUpperCase()}</span>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={cancelTagChange}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmTagChange}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

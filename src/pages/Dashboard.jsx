@@ -28,7 +28,6 @@ function Dashboard() {
   });
   
   // Data states
-  const [classQuestions, setClassQuestions] = useState([]);
   const [personalAssignments, setPersonalAssignments] = useState([]);
   const [allMessages, setAllMessages] = useState([]);
   
@@ -40,25 +39,7 @@ function Dashboard() {
     setActiveSection((prev) => (prev === sectionName ? '' : sectionName));
   };
 
-  // Fetch class questions (public assignments)
-  useEffect(() => {
-    if (!auth) return;
-    const fetchClassQuestions = async () => {
-      try {
-        const res = await api.get('/assignments', { params: { category: 'public', ...filters } });
-        // Filter to keep only HW and CW assignments
-        const filtered = res.data.filter(
-          (assignment) =>
-            assignment.assignmentTag === 'HW' || assignment.assignmentTag === 'CW'
-        );
-        setClassQuestions(filtered);
-      } catch (err) {
-        console.error(err);
-        toast.error('Failed to fetch class questions.');
-      }
-    };
-    fetchClassQuestions();
-  }, [auth, filters]);
+ 
 
   // Fetch personal assignments
   useEffect(() => {
@@ -66,6 +47,7 @@ function Dashboard() {
     const fetchPersonalAssignments = async () => {
       try {
         const res = await api.get('/assignments/personal');
+        console.log("Fetching and found this personal assignment data: ", res.data)
         setPersonalAssignments(res.data);
       } catch (err) {
         console.error(err);
@@ -80,6 +62,8 @@ function Dashboard() {
     if (!auth || activeSection !== 'msgList') return;
     const fetchMessages = async () => {
       try {
+        console.log("allForStudent is being fetched");
+
         const res = await api.get('/messages/allForStudent');
         setAllMessages(res.data);
       } catch (err) {
@@ -100,12 +84,12 @@ function Dashboard() {
 
       {/* Toggle Buttons */}
       <div className="flex flex-wrap gap-4 mb-6">
-        <button
+        {/* <button
           onClick={() => toggleSection('class')}
           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
         >
           {activeSection === 'class' ? 'Hide Class Questions' : 'View Class Questions'}
-        </button>
+        </button> */}
         <button
           onClick={() => toggleSection('personal')}
           className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors"
@@ -146,7 +130,7 @@ function Dashboard() {
       {activeSection === 'class' && (
         <div className="mb-6">
           {/* Filter UI for Class Questions */}
-          <div className="bg-white p-4 rounded shadow mb-6">
+          {/* <div className="bg-white p-4 rounded shadow mb-6">
             <h3 className="text-xl font-bold mb-4">Filter Class Questions</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -205,7 +189,7 @@ function Dashboard() {
                 <AssignmentCard key={assignment._id} assignment={assignment} />
               ))
             )}
-          </div>
+          </div> */}
         </div>
       )}
 

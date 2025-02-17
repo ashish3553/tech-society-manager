@@ -11,9 +11,9 @@ function Practice() {
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
 
-  // Set default assignmentTag filter to include all relevant tags.
+  // Set default assignmentTag filter to 'all' so that both common & personal assignments are returned.
   const [filters, setFilters] = useState({
-    assignmentTag: 'practice',
+    assignmentTag: 'all', // Changed default to "all" so the backend returns all assignments.
     difficulty: '',
     tags: '',
     responseStatus: ''
@@ -29,7 +29,7 @@ function Practice() {
 
   const fetchAssignments = async () => {
     try {
-      // Always pass the filters, which by default include practice, HW, and CW.
+      // Always pass the filters, which now include assignmentTag.
       const params = {
         ...filters
       };
@@ -52,12 +52,29 @@ function Practice() {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Practice Questions</h1>
+      {/* <h1 className="text-3xl font-bold mb-3 text-center">Practice Questions</h1> */}
       
       {/* Filter Form */}
-      <div className="bg-white p-6 rounded shadow mb-6">
+      <div className="bg-white p-6 rounded shadow mb-3">
         <h2 className="text-xl font-bold mb-4">Filter Questions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Assignment Tag Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Tag:</label>
+            <select
+              name="assignmentTag"
+              value={filters.assignmentTag}
+              onChange={handleFilterChange}
+              className="w-full border border-gray-300 rounded p-2"
+            >
+              <option value="all">All</option>
+              <option value="practice">Practice</option>
+              <option value="hw">HW</option>
+              <option value="cw">CW</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty:</label>
             <select
@@ -99,14 +116,14 @@ function Practice() {
             </select>
           </div>
         </div>
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <button
             onClick={fetchAssignments}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
           >
             Apply Filters
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Practice Assignments Grid */}

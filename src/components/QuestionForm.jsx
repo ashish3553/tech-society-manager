@@ -1,44 +1,75 @@
-// src/components/QuestionForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import BasicTextEditor from './BasicTextEditor';
 import { toast } from 'react-toastify';
 import api from '../services/api';
 
+const presetMajorTopics = [
+  "Basics & Syntax",
+  "Data Types & Variables",
+  "Operators",
+  "Control Structures",
+  "Functions",
+  "Pointers & Memory Management",
+  "Arrays",
+  "String",
+  "Object-Oriented Programming (OOP)",
+  "Templates & Generic Programming",
+  "STL",
+  "Exception Handling",
+  "File I/O",
+  "Advanced Topics"
+];
+
 function QuestionForm() {
   const [questionData, setQuestionData] = useState({
-    title: '',
+    title: '', 
     explanation: '',
-    testCases: '',
+    // Test cases will be stored as an array of objects:
+    testCases: [],
     difficulty: 'easy',
     tags: '',
-    assignmentTag: 'practice',
-    codingPlatformLink: '',
-    solution: '',
-    attachments: null,
-    assignmentType: 'public',
-    selectedStudents: []
+    repoCategory: 'question', // question or project
+    questionType: 'coding',   // if repoCategory === "question"
+    majorTopic: presetMajorTopics[0],
+    // Similar questions is an array of objects with title and url
+    similarQuestions: [],
+    codingPlatformLink: ''
   });
-  const [students, setStudents] = useState([]);
 
-  useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const res = await api.get('/users/students');
-        setStudents(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchStudents();
-  }, []);
+  // State for new test case entry:
+  const [newTestCase, setNewTestCase] = useState({ input: '', output: '', explanation: '' });
+  // State for new similar question:
+  const [newSimilar, setNewSimilar] = useState({ title: '', url: '' });
 
-  const handleStudentSelect = (studentId, isChecked) => {
-    setQuestionData((prev) => {
-      const updated = isChecked
-        ? [...prev.selectedStudents, studentId]
-        : prev.selectedStudents.filter((id) => id !== studentId);
-      return { ...prev, selectedStudents: updated };
-    });
+  // Handler for BasicTextEditor to save explanation:
+  const handleEditorSave = (value) => {
+    setQuestionData((prev) => ({ ...prev, explanation: value }));
+  };
+
+  // Handler to add a test case:
+  const addTestCase = () => {
+    if (newTestCase.input.trim() && newTestCase.output.trim()) {
+      setQuestionData((prev) => ({
+        ...prev,
+        testCases: [...prev.testCases, newTestCase]
+      }));
+      setNewTestCase({ input: '', output: '', explanation: '' });
+    } else {
+      toast.error('Test case must have at least input and output.');
+    }
+  };
+
+  // Handler to add a similar question:
+  const addSimilarQuestion = () => {
+    if (newSimilar.title.trim() && newSimilar.url.trim()) {
+      setQuestionData((prev) => ({
+        ...prev,
+        similarQuestions: [...prev.similarQuestions, newSimilar]
+      }));
+      setNewSimilar({ title: '', url: '' });
+    } else {
+      toast.error('Please provide both title and URL for similar question.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -46,48 +77,53 @@ function QuestionForm() {
     const formData = new FormData();
     formData.append('title', questionData.title);
     formData.append('explanation', questionData.explanation);
-    formData.append('testCases', questionData.testCases);
+    // Append test cases and similar questions as JSON strings:
+    formData.append('testCases', JSON.stringify(questionData.testCases));
     formData.append('difficulty', questionData.difficulty);
     formData.append('tags', questionData.tags);
-    formData.append('assignmentTag', questionData.assignmentTag);
+    formData.append('repoCategory', questionData.repoCategory);
+    if (questionData.repoCategory === 'question') {
+      formData.append('questionType', questionData.questionType);
+    }
+    formData.append('majorTopic', questionData.majorTopic);
+    formData.append('similarQuestions', JSON.stringify(questionData.similarQuestions));
     formData.append('codingPlatformLink', questionData.codingPlatformLink);
-    formData.append('solution', questionData.solution);
-    formData.append('category', questionData.assignmentType === 'public' ? 'public' : 'personal');
-    if (questionData.assignmentType === 'personal') {
-      formData.append('assignedTo', JSON.stringify(questionData.selectedStudents));
+    // Note: Distribution tag is not appended because it defaults to "central" on creation.
+
+    // (Optional) Debug FormData entries:
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
-    if (questionData.attachments) {
-      for (let i = 0; i < questionData.attachments.length; i++) {
-        formData.append('attachments', questionData.attachments[i]);
-      }
-    }
+
     try {
       await api.post('/assignments', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      toast.success('Question created successfully!');
+      toast.success('Item created successfully!');
+      // Reset state as needed
       setQuestionData({
         title: '',
         explanation: '',
-        testCases: '',
+        testCases: [],
         difficulty: 'easy',
         tags: '',
-        assignmentTag: 'practice',
-        codingPlatformLink: '',
-        solution: '',
-        attachments: null,
-        assignmentType: 'public',
-        selectedStudents: []
+        repoCategory: 'question',
+        questionType: 'coding',
+        majorTopic: presetMajorTopics[0],
+        similarQuestions: [],
+        codingPlatformLink: ''
       });
     } catch (err) {
       console.error(err);
-      toast.error('Failed to create question.');
+      toast.error('Failed to create item.');
     }
   };
 
   return (
     <div className="bg-white rounded shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">Create Question</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        Create {questionData.repoCategory === 'question' ? 'Question' : 'Project'}
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
         <div>
@@ -100,19 +136,46 @@ function QuestionForm() {
             required
           />
         </div>
-        {/* Question Content */}
+        {/* Content (Explanation) */}
         <div>
-          <label className="block font-medium mb-1">Question Content:</label>
-          <BasicTextEditor onSave={(value) => setQuestionData({ ...questionData, explanation: value })} />
+          <label className="block font-medium mb-1">Content:</label>
+          <BasicTextEditor onSave={handleEditorSave} />
         </div>
-        {/* Test Cases */}
+        {/* Test Cases Section */}
         <div>
           <label className="block font-medium mb-1">Test Cases:</label>
-          <textarea 
-            className="w-full border rounded p-2" 
-            value={questionData.testCases}
-            onChange={(e) => setQuestionData({ ...questionData, testCases: e.target.value })}
-          />
+          {questionData.testCases.map((tc, index) => (
+            <div key={index} className="border p-2 mb-2 rounded">
+              <p><strong>Input:</strong> {tc.input}</p>
+              <p><strong>Output:</strong> {tc.output}</p>
+              {tc.explanation && <p><strong>Explanation:</strong> {tc.explanation}</p>}
+            </div>
+          ))}
+          <div className="border p-2 rounded mb-2">
+            <input 
+              type="text"
+              placeholder="Test Case Input (supports multiline)"
+              value={newTestCase.input}
+              onChange={(e) => setNewTestCase({ ...newTestCase, input: e.target.value })}
+              className="w-full border rounded p-2 mb-2"
+            />
+            <input 
+              type="text"
+              placeholder="Test Case Output"
+              value={newTestCase.output}
+              onChange={(e) => setNewTestCase({ ...newTestCase, output: e.target.value })}
+              className="w-full border rounded p-2 mb-2"
+            />
+            <textarea 
+              placeholder="Explanation (optional)"
+              value={newTestCase.explanation}
+              onChange={(e) => setNewTestCase({ ...newTestCase, explanation: e.target.value })}
+              className="w-full border rounded p-2 mb-2"
+            ></textarea>
+            <button type="button" onClick={addTestCase} className="bg-green-500 text-white px-3 py-1 rounded">
+              Add Test Case
+            </button>
+          </div>
         </div>
         {/* Difficulty */}
         <div>
@@ -138,19 +201,76 @@ function QuestionForm() {
             onChange={(e) => setQuestionData({ ...questionData, tags: e.target.value })}
           />
         </div>
-        {/* Assignment Tag */}
+        {/* Repo Category */}
         <div>
-          <label className="block font-medium mb-1">Assignment Tag:</label>
+          <label className="block font-medium mb-1">Category:</label>
           <select 
             className="w-full border rounded p-2"
-            value={questionData.assignmentTag}
-            onChange={(e) => setQuestionData({ ...questionData, assignmentTag: e.target.value })}
+            value={questionData.repoCategory}
+            onChange={(e) => setQuestionData({ ...questionData, repoCategory: e.target.value })}
             required
           >
-            <option value="practice">Practice</option>
-            <option value="HW">HW</option>
-            <option value="CW">CW</option>
+            <option value="question">Question</option>
+            <option value="project">Project</option>
           </select>
+        </div>
+        {/* If Question, select Question Type */}
+        {questionData.repoCategory === 'question' && (
+          <div>
+            <label className="block font-medium mb-1">Question Type:</label>
+            <select 
+              className="w-full border rounded p-2"
+              value={questionData.questionType}
+              onChange={(e) => setQuestionData({ ...questionData, questionType: e.target.value })}
+              required
+            >
+              <option value="coding">Coding</option>
+              <option value="conceptual">Conceptual</option>
+            </select>
+          </div>
+        )}
+        {/* Major Topic */}
+        <div>
+          <label className="block font-medium mb-1">Major Topic:</label>
+          <select 
+            className="w-full border rounded p-2"
+            value={questionData.majorTopic}
+            onChange={(e) => setQuestionData({ ...questionData, majorTopic: e.target.value })}
+            required
+          >
+            {presetMajorTopics.map((topic, idx) => (
+              <option key={idx} value={topic}>{topic}</option>
+            ))}
+          </select>
+        </div>
+        {/* Similar Questions Section */}
+        <div>
+          <label className="block font-medium mb-1">Similar Questions:</label>
+          {questionData.similarQuestions.map((sq, index) => (
+            <div key={index} className="border p-2 mb-2 rounded">
+              <p><strong>Title:</strong> {sq.title}</p>
+              <p><strong>URL:</strong> {sq.url}</p>
+            </div>
+          ))}
+          <div className="border p-2 rounded mb-2">
+            <input 
+              type="text"
+              placeholder="Similar Question Title"
+              value={newSimilar.title}
+              onChange={(e) => setNewSimilar({ ...newSimilar, title: e.target.value })}
+              className="w-full border rounded p-2 mb-2"
+            />
+            <input 
+              type="text"
+              placeholder="Similar Question URL"
+              value={newSimilar.url}
+              onChange={(e) => setNewSimilar({ ...newSimilar, url: e.target.value })}
+              className="w-full border rounded p-2 mb-2"
+            />
+            <button type="button" onClick={addSimilarQuestion} className="bg-green-500 text-white px-3 py-1 rounded">
+              Add Similar Question
+            </button>
+          </div>
         </div>
         {/* Coding Platform Link */}
         <div>
@@ -162,76 +282,8 @@ function QuestionForm() {
             onChange={(e) => setQuestionData({ ...questionData, codingPlatformLink: e.target.value })}
           />
         </div>
-        {/* Solution */}
-        <div>
-          <label className="block font-medium mb-1">Solution (optional):</label>
-          <textarea 
-            className="w-full border rounded p-2"
-            value={questionData.solution}
-            onChange={(e) => setQuestionData({ ...questionData, solution: e.target.value })}
-          />
-        </div>
-        {/* Attachments */}
-        <div>
-          <label className="block font-medium mb-1">Attachments (Images/PDFs):</label>
-          <input 
-            type="file" 
-            multiple
-            onChange={(e) => setQuestionData({ ...questionData, attachments: e.target.files })}
-            className="w-full"
-            accept="image/*,application/pdf"
-          />
-        </div>
-        {/* Assignment Type */}
-        <div>
-          <label className="block font-medium mb-1">Assignment Type:</label>
-          <select 
-            className="w-full border rounded p-2"
-            value={questionData.assignmentType}
-            onChange={(e) => setQuestionData({ ...questionData, assignmentType: e.target.value })}
-            required
-          >
-            <option value="public">Public Assignment</option>
-            <option value="personal">Personal Assignment</option>
-          </select>
-        </div>
-        {/* For Personal Assignment: Student Selection */}
-        {questionData.assignmentType === 'personal' && (
-          <div className="mt-4">
-            <h3 className="text-xl font-semibold mb-2">Select Students for Personal Assignment</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {students.map((student) => (
-                <div key={student._id} className="border rounded p-2 flex items-center">
-                  <input 
-                    type="checkbox" 
-                    onChange={(e) => handleStudentSelect(student._id, e.target.checked)}
-                    className="mr-2"
-                  />
-                  <div className="flex items-center">
-                    {student.profileImage ? (
-                      <img
-                        src={student.profileImage}
-                        alt="Profile"
-                        className="w-10 h-10 rounded-full mr-2 object-cover"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-300 mr-2 flex items-center justify-center">
-                        <span className="text-xs text-gray-500">No Img</span>
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-medium">{student.name}</p>
-                      <p className="text-sm text-gray-600">{student.email}</p>
-                      <p className="text-sm text-gray-600">{student.branch}, {student.year}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
         <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-          Create Question
+          Create {questionData.repoCategory === 'question' ? 'Question' : 'Project'}
         </button>
       </form>
     </div>

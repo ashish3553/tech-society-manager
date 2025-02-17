@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ function Login() {
     e.preventDefault();
     try {
       const res = await api.post('/auth/login', { email, password });
-      console.log("Recieved data after login is: ", res.data)
+      console.log("Received data after login:", res.data);
       setAuth({ token: res.data.token, user: res.data.user });
       navigate('/dashboard'); // Redirect to dashboard after successful login
     } catch (err) {
@@ -48,17 +49,26 @@ function Login() {
               className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors">
+          <button 
+            type="submit" 
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+          >
             Login
           </button>
         </form>
-        {/* Registration link */}
-        <p className="mt-4 text-center text-gray-700">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Create an account
+        <div className="mt-4 flex flex-col items-center">
+          {/* Forgot Password Link */}
+          <Link to="/forgot-password" className="text-blue-600 hover:underline mb-2">
+            Forgot Password?
           </Link>
-        </p>
+          {/* Registration Link */}
+          <p className="text-gray-700">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-blue-600 hover:underline">
+              Create an account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

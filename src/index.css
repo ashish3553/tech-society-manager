@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Custom thin scrollbar styling */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #2563eb #e5e7eb; /* blue-600 and gray-200 */
+  }
+  
+  /* For WebKit-based browsers */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #e5e7eb;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #2563eb;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  

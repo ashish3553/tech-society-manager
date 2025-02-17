@@ -15,6 +15,13 @@ import DoubtDetail from '../pages/DoubtDetail';
 import PreviousBriefings from '../pages/PreviousBriefing';
 import AdminDashboard from '../pages/AdminDashboard';
 import Contact from '../pages/Contact';
+import SolutionEditorPage from '../pages/SolutionEditorPage';
+import MessageDetail from '../components/MessageDetail';
+import Resourse from '../pages/Resourse';
+import VerifyEmailPending from '../pages/VerifyEmailPending';
+import VerifyOTP from '../pages/OtpVerificationPage';
+import ForgotPassword from '../pages/ForgetPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 function AppRoutes() {
   return (
@@ -24,14 +31,26 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/practice" element={<Practice />} />
       <Route path="/register" element={<Registration />} /> 
+      <Route path="/verify-otp" element={<VerifyOTP />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+
+
+
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/mentor" element={<MentorDashboard />} />
       <Route path="/assignments" element={<Assignments />} />
+      <Route path="/resourse" element={<Resourse />} />
       <Route path="/doubts" element={<Doubts/>} />
       <Route path="/assignments/:id" element={<AssignmentDetails />} />
+      <Route path="/solution/:assignmentId" element={<SolutionEditorPage />} />
+
+
       <Route path="/doubts" element={<Doubts />} />
-      <Route path="/doubts/:id" element={<DoubtDetail />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/doubts/:id" element={<DoubtDetail />} />
+      <Route path="/messages/:id" element={<MessageDetail />} />
+
       <Route path="/briefings/archive" element={<PreviousBriefings />} />
 
 

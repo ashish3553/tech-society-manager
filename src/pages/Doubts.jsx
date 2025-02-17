@@ -9,149 +9,174 @@ function Doubts() {
   const { auth } = useContext(AuthContext);
   const [doubts, setDoubts] = useState([]);
   
-  // Filter state variables.
+  // Filter state variables
   const [assignmentTag, setAssignmentTag] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [assignmentTitle, setAssignmentTitle] = useState('');
   const [resolved, setResolved] = useState('');
+  const [status, setStatus] = useState('');
+  const [timeframe, setTimeframe] = useState(''); // "today", "yesterday", or empty
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [total, setTotal] = useState(0);
 
-  const params = {
-    status: 'replied',           // or 'new', 'unsatisfied', 'resolved'
-    timeframe: 'today',          // or 'tomorrow'
-    page: 1,
-    limit: 10,
-    assignmentTitle: 'array',    // optional search by assignment title
-    difficulty: 'easy',          // optional
-  };
-  
-
-  // Function to fetch filtered doubts.
-
+  // Function to fetch filtered doubts from backend
   const fetchFilteredDoubts = async () => {
     try {
-      const res = await api.get('/doubts/filter-doubts', {
-        params: {
-          assignmentTag: assignmentTag,  // your state variable for assignmentTag
-          difficulty: difficulty,        // your state variable for difficulty
-          assignmentTitle: assignmentTitle,  // your state variable for assignmentTitle
-          resolved: resolved             // your state variable for resolved status ("true" or "false")
-        }
-      });
-      setDoubts(res.data);
+      const params = {
+        assignmentTag,
+        difficulty,
+        assignmentTitle,
+        resolved,
+        status,
+        timeframe,
+        page,
+        limit
+      };
+      const res = await api.get('/doubts/filter-doubts', { params });
+      setDoubts(res.data.doubts);
+      setTotal(res.data.total);
     } catch (err) {
       console.error(err);
       toast.error('Failed to fetch filtered doubts.');
     }
   };
 
-
-
-  
-
-  // For mentors/admins we use the filter endpoint; for students, you may wish to use the simpler GET route
+  // Always call fetchFilteredDoubts for all authenticated users
   useEffect(() => {
-    if (auth) {
-      // For mentors and admins, we always call the filter endpoint.
-      if (auth.user.role === 'mentor' || auth.user.role === 'admin') {
-        fetchFilteredDoubts();
-      } else if (auth.user.role === 'student' || auth.user.role === 'volunteer') {
-        // For students, fetch only their doubts.
-        const fetchMyDoubts = async () => {
-          try {
-            console.log("trying to fetch your doubts")
-            const res = await api.get('/doubts');
-            console.log("All doubts are",res.data)
-            setDoubts(res.data);
-          } catch (err) {
-            console.error(err);
-            toast.error('Failed to fetch doubts.');
-          }
-        };
-        fetchMyDoubts();
-      }
-    }
+    if (!auth) return;
+    fetchFilteredDoubts();
+  }, [auth, assignmentTag, difficulty, assignmentTitle, resolved, status, timeframe, page, limit]);
 
-    console.log("Hii in doubt page")
-
-    // We want to re-run filtering when filter values change for mentors/admins.
-  }, [auth, assignmentTag, difficulty, assignmentTitle, resolved]);
-
-  // Handler for form submission.
   const handleFilterSubmit = (e) => {
     e.preventDefault();
     fetchFilteredDoubts();
   };
 
+  // Pagination control handlers
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (page * limit < total) {
+      setPage(page + 1);
+    }
+  };
+
+  if (!auth) {
+    return <p className="text-center text-gray-500">Please log in to view doubts.</p>;
+  }
+
   return (
     <div className="container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-6">Doubts</h1>
       
-      {/* Filter Form for Mentors/Admins */}
-      {(auth && (auth.user.role === 'mentor' || auth.user.role === 'admin')) && (
-        <div className="bg-white p-6 rounded shadow">
-          <h2 className="text-xl font-semibold mb-4">Filter Doubts</h2>
-          <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Assignment Tag */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Tag</label>
-              <select
-                value={assignmentTag}
-                onChange={(e) => setAssignmentTag(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2"
-              >
-                <option value="">All</option>
-                <option value="HW">HW</option>
-                <option value="CW">CW</option>
-                <option value="practice">Practice</option>
-              </select>
-            </div>
-            {/* Difficulty */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2"
-              >
-                <option value="">All</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </div>
-            {/* Assignment Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Title</label>
+      {/* Filter Form for All Authenticated Users */}
+      <div className="bg-white p-4 rounded shadow mb-6">
+        <h2 className="text-xl font-semibold mb-4">Filter Doubts</h2>
+        <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Assignment Tag */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Assignment Tag</label>
+            <select
+              value={assignmentTag}
+              onChange={(e) => setAssignmentTag(e.target.value)}
+              className="w-full border rounded p-2"
+            >
+              <option value="">All</option>
+              <option value="HW">HW</option>
+              <option value="CW">CW</option>
+              <option value="practice">Practice</option>
+            </select>
+          </div>
+          {/* Difficulty */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Difficulty</label>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="w-full border rounded p-2"
+            >
+              <option value="">All</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+
+          {/* Current Status */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <label className="block text-sm font-medium text-gray-700">Current Status</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full border rounded p-2"
+            >
+              <option value="">All</option>
+              <option value="new">New</option>
+              <option value="replied">Replied</option>
+              <option value="unsatisfied">Unsatisfied</option>
+              <option value="review">Review</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          {/* Timeframe */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <label className="block text-sm font-medium text-gray-700">Timeframe</label>
+            <select
+              value={timeframe}
+              onChange={(e) => setTimeframe(e.target.value)}
+              className="w-full border rounded p-2"
+            >
+              <option value="">All</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+            </select>
+          </div>
+        </form>
+        
+        {/* Pagination Controls placed below the filter section */}
+        <div className="flex items-center justify-between mt-6">
+          <button onClick={handlePrevPage} disabled={page === 1}
+            className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 transition-colors">
+            Previous
+          </button>
+          <div className="flex items-center gap-4">
+            <span>
+              Page: 
               <input
-                type="text"
-                value={assignmentTitle}
-                onChange={(e) => setAssignmentTitle(e.target.value)}
-                placeholder="e.g., array, loop, oops"
-                className="w-full border border-gray-300 rounded p-2"
+                type="number"
+                value={page}
+                onChange={(e) => setPage(parseInt(e.target.value) || 1)}
+                className="w-16 border rounded p-1 text-center mx-2"
+                min="1"
               />
-            </div>
-            {/* Resolved Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Resolved Status</label>
-              <select
-                value={resolved}
-                onChange={(e) => setResolved(e.target.value)}
-                className="w-full border border-gray-300 rounded p-2"
-              >
-                <option value="">All</option>
-                <option value="true">Resolved</option>
-                <option value="false">Unresolved</option>
-              </select>
-            </div>
-            <div className="sm:col-span-2 lg:col-span-4">
-              <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors">
-                Apply Filters
-              </button>
-            </div>
-          </form>
+            </span>
+            <span>
+              Cards per page: 
+              <input
+                type="number"
+                value={limit}
+                onChange={(e) => setLimit(parseInt(e.target.value) || 10)}
+                className="w-16 border rounded p-1 text-center mx-2"
+                min="1"
+              />
+            </span>
+            <span>
+              Total Pages: {Math.ceil(total / limit)}
+            </span>
+          </div>
+          <button onClick={handleNextPage} disabled={page * limit >= total}
+            className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 transition-colors">
+            Next
+          </button>
         </div>
-      )}
+      </div>
 
       {/* Doubt Cards */}
       {doubts.length === 0 ? (

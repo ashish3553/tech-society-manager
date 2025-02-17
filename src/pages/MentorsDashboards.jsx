@@ -14,6 +14,7 @@ import MessageListSection from '../components/MessageListSection';// Component t
 import MentorProfile from '../components/MentorProfile';        // Mentor profile summary component
 import AdminProfile from '../components/AdminProfile';          // Admin profile summary component
 import ContactMessageCard from '../components/ContactMessageCard';// Component to display contact messages
+import AssignmentCard from '../components/AssignmentCard';      // Component to display assignment cards
 
 function MentorDashboard() {
   const { auth } = useContext(AuthContext);
@@ -28,13 +29,15 @@ function MentorDashboard() {
   // Data fetched from backend
   const [students, setStudents] = useState([]);
   const [publicAssignments, setPublicAssignments] = useState([]);
-  const [personalAssignments, setPersonalAssignments] = useState([]);
+  const [personalAssignments, setPersonalAssignments] = useState([]); // For student personal assignments
+  const [personalAssigned, setPersonalAssigned] = useState([]); // For mentor's view of assignments assigned personally to students
   const [personalMessages, setPersonalMessages] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
   const [allMessages, setAllMessages] = useState([]);
   const [contactMessages, setContactMessages] = useState([]); // New state for contact messages
 
   // --- Data Fetching ---
+
   // Fetch students (for student list and message recipients)
   useEffect(() => {
     const fetchStudents = async () => {
@@ -48,33 +51,33 @@ function MentorDashboard() {
     fetchStudents();
   }, []);
 
-  // Fetch public assignments
-  useEffect(() => {
-    if (!auth) return;
-    const fetchPublicAssignments = async () => {
-      try {
-        const res = await api.get('/assignments', { params: { category: 'public' } });
-        setPublicAssignments(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPublicAssignments();
-  }, [auth]);
+  // // Fetch public assignments
+  // useEffect(() => {
+  //   if (!auth) return;
+  //   const fetchPublicAssignments = async () => {
+  //     try {
+  //       const res = await api.get('/assignments', { params: { category: 'public' } });
+  //       setPublicAssignments(res.data);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   fetchPublicAssignments();
+  // }, [auth]);
 
-  // Fetch personal assignments for the logged-in student
-  useEffect(() => {
-    if (!auth) return;
-    const fetchPersonalAssignments = async () => {
-      try {
-        const res = await api.get('/assignments/personal');
-        setPersonalAssignments(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPersonalAssignments();
-  }, [auth]);
+  // // Fetch personal assignments for the logged-in student
+  // useEffect(() => {
+  //   if (!auth) return;
+  //   const fetchPersonalAssignments = async () => {
+  //     try {
+  //       const res = await api.get('/assignments/personal');
+  //       setPersonalAssignments(res.data);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   fetchPersonalAssignments();
+  // }, [auth]);
 
   // Fetch personal messages for the logged-in student
   useEffect(() => {
@@ -85,10 +88,10 @@ function MentorDashboard() {
         setPersonalMessages(res.data);
       } catch (err) {
         console.error(err);
-      }
+      } 
     };
     fetchPersonalMessages();
-  }, [auth]);
+  }, [auth]); 
 
   // Fetch all users for Admin Panel (only if admin)
   useEffect(() => {
@@ -115,7 +118,9 @@ function MentorDashboard() {
         if (auth.user.role === 'mentor') {
           params.sender = auth.user.id;
         }
-        const res = await api.get('/messages/all', { params });
+        console.log("Fetching all messages")
+        const res = await api.get('/messages/allForMentor', { params });
+        console.log("Got message:", res.data)
         setAllMessages(res.data);
       } catch (err) {
         console.error(err);
@@ -139,6 +144,27 @@ function MentorDashboard() {
     };
     fetchContactMessages();
   }, [auth, activeSection]);
+
+  // NEW: Fetch personal assignments assigned by mentor (for mentors/admins) 
+  // These are assignments with distributionTag "personal" created by the mentor.
+  useEffect(() => {
+    if (!auth || activeSection !== 'personalAssign') return;
+    const fetchPersonalAssigned = async () => {
+      try {
+        console.log("Checking your personal assignments: ")
+        const res = await api.get('/assignments/personalAssigned');
+        console.log("Here it is :",res.data);
+        setPersonalAssigned(res.data);
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to fetch personal assignments.');
+      }
+    };
+    fetchPersonalAssigned();
+  }, [auth, activeSection]);
+
+
+  
 
   // --- Toggle Function (ensuring only one section is open at a time) ---
   const toggleSection = (sectionName) => {
@@ -202,6 +228,16 @@ function MentorDashboard() {
             {activeSection === 'msgList' ? 'Hide All Messages' : 'View All Messages'}
           </button>
         )}
+        {(auth.user.role === 'mentor' || auth.user.role === 'admin') && (
+          <button
+            onClick={() => toggleSection('personalAssign')}
+            className="bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors"
+          >
+            {activeSection === 'personalAssign'
+              ? 'Hide Personal Assignments'
+              : 'View Personal Assignments'}
+          </button>
+        )}
         {auth.user.role === 'admin' && (
           <>
             <button
@@ -214,7 +250,9 @@ function MentorDashboard() {
               onClick={() => toggleSection('contactMsg')}
               className="bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors"
             >
-              {activeSection === 'contactMsg' ? 'Hide Contact Messages' : 'Contact Messages'}
+              {activeSection === 'contactMsg'
+                ? 'Hide Contact Messages'
+                : 'Contact Messages'}
             </button>
           </>
         )}
@@ -236,6 +274,20 @@ function MentorDashboard() {
           messages={allMessages}
           onUpdate={(msg) => toast.info(`Update message: ${msg.subject}`)}
         />
+      )}
+      {activeSection === 'personalAssign' && (
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Personal Assignments You Assigned</h2>
+          {personalAssigned.length === 0 ? (
+            <p>No personal assignments assigned.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {personalAssigned.map((assignment) => (
+                <AssignmentCard key={assignment._id} assignment={assignment} />
+              ))}
+            </div>
+          )}
+        </div>
       )}
       {activeSection === 'admin' && isAdmin && (
         <AdminPanel 
