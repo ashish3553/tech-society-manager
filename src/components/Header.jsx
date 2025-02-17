@@ -19,7 +19,7 @@ function Header() {
         {/* Logo/Title */}
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl font-bold">
-            <Link to="/home" className="hover:underline">Coders Care</Link>
+            <Link to="/home" className="hover:underline">Codeindia.Fun</Link>
           </h1>
         </div>
         {/* Navigation */}
