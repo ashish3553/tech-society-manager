@@ -63,6 +63,7 @@ function StudentProfile() {
 
   if (!auth || !auth.user) return null;
   const { user } = auth;
+  console.log("hii",user)
 
   return (
     <div className="bg-white rounded shadow p-4 mb-6">
