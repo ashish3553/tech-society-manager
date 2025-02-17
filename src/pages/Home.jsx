@@ -104,7 +104,7 @@ function Home() {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Welcome to Coding Journey</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Welcome to Code India</h1>
 
       {/* Recent Class Briefings Section */}
       <section>
