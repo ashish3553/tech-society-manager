@@ -79,7 +79,7 @@ function Header() {
                 )}
                 <li>
                   <Link to="/resourse" className="hover:underline">
-                    Resourse
+                    Resource
                   </Link>
                 </li>
                 <li>
