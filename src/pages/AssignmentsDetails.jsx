@@ -11,6 +11,7 @@ import StudentResponseForm from '../components/StudentResponseForm';
 import MentorActions from '../components/MentorAction';
 import MentorSolutionSection from '../components/MentorSolutionSection';
 import StudentSolutionSection from '../components/StudentSolutionSection';
+import QuestionForm from '../components/QuestionForm';
 
 function AssignmentDetails() {
   const { id } = useParams();
@@ -33,7 +34,6 @@ function AssignmentDetails() {
   const [showSolutionInline, setShowSolutionInline] = useState(false);
   const solutionRef = useRef(null); // Ref for solution section
 
-
   const isMentor = auth && (auth.user.role === 'mentor' || auth.user.role === 'admin');
   const canRespond = auth && (auth.user.role === 'student' || auth.user.role === 'volunteer');
 
@@ -41,9 +41,9 @@ function AssignmentDetails() {
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
-        console.log("Trying to get assignment details:")
+        console.log("Trying to get assignment details:");
         const res = await api.get(`/assignments/${id}`);
-        console.log("Here is details: ", res.data)
+        console.log("Here is details: ", res.data);
         setAssignment(res.data);
         setSolutionContent(res.data.solution || '');
         setEditData({
@@ -106,29 +106,26 @@ function AssignmentDetails() {
     }
   };
 
-
-    // Fetch the solution from your API
-    useEffect(() => {
-      const fetchSolution = async () => {
-        try {
-          console.log("Fetching mentor page solution")
-          const res = await api.get(`/assignments/${id}/solution`);
-          console.log("Found mentor page solution", res.data)
-  
-          setSolutionContent(res.data);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchSolution();
-    }, [id]);
-
-
-    useEffect(() => {
-      if (showSolutionInline && solutionRef.current) {
-        solutionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Fetch the solution from your API
+  useEffect(() => {
+    const fetchSolution = async () => {
+      try {
+        console.log("Fetching mentor page solution");
+        const res = await api.get(`/assignments/${id}/solution`);
+        console.log("Found mentor page solution", res.data);
+        setSolutionContent(res.data);
+      } catch (err) {
+        console.error(err);
       }
-    }, [showSolutionInline]);
+    };
+    fetchSolution();
+  }, [id]);
+
+  useEffect(() => {
+    if (showSolutionInline && solutionRef.current) {
+      solutionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showSolutionInline]);
 
   // Handler for updating solution (mentor)
   const handleSolutionUpdate = async (e) => {
@@ -199,7 +196,7 @@ function AssignmentDetails() {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      {/* Merged block: Assignment display and student response side by side */}
+      {/* If mentor can respond, show a merged block with assignment display and student response */}
       {canRespond ? (
         <div className="border rounded-lg shadow p-4 md:flex md:items-stretch">
           <div className="md:w-2/3 border-r md:pr-4">
@@ -213,10 +210,9 @@ function AssignmentDetails() {
                 responseData={responseData} 
                 setResponseData={setResponseData} 
                 onSubmit={handleResponseSubmit} 
-                solution_content={solutionContent || {}} // Pass solution object
-                showSolution={showSolutionInline}           // Parent state
-                setShowSolution={setShowSolutionInline}            // Parent's state controlling solution visibility
-                
+                solution_content={solutionContent || {}} 
+                showSolution={showSolutionInline}
+                setShowSolution={setShowSolutionInline}
               />
             </div>
           </div>
@@ -225,21 +221,36 @@ function AssignmentDetails() {
         <AssignmentDisplay assignment={assignment} />
       )}
 
-      {/* Full-width solution section below the merged block */}
+      {/* If solution is meant to be displayed inline */}
       {canRespond && showSolutionInline && (
         <StudentSolutionSection assignmentId={id} />
       )}
 
-      {isMentor && (
-        <MentorActions 
-          displayDate={displayDate}
-          setIsEditingAssignment={setIsEditingAssignment}
-          showPersonalInput={showPersonalInput}
-          setShowPersonalInput={setShowPersonalInput}
-          selectedStudents={selectedStudents}
-          setSelectedStudents={setSelectedStudents}
-          handleAssignPersonal={handleAssignPersonal}
-        />
+      {/* If the mentor clicks the Edit button, show the edit form */}
+      {isMentor && isEditingAssignment ? (
+        <div className="bg-white p-6 rounded shadow">
+          <h2 className="text-2xl font-bold mb-4">Edit Assignment</h2>
+          <QuestionForm
+          isEdit={true} 
+          initialData={editData}
+            setEditData={setEditData}
+            onSubmit={handleAssignmentEditSubmit}
+            onCancel={() => setIsEditingAssignment(false)}
+          />
+        </div>
+      ) : (
+        // Otherwise, show mentor actions (which include the "Edit Question" button)
+        isMentor && (
+          <MentorActions 
+            displayDate={displayDate}
+            setIsEditingAssignment={setIsEditingAssignment}
+            showPersonalInput={showPersonalInput}
+            setShowPersonalInput={setShowPersonalInput}
+            selectedStudents={selectedStudents}
+            setSelectedStudents={setSelectedStudents}
+            handleAssignPersonal={handleAssignPersonal}
+          />
+        )
       )}
 
       {isMentor && (

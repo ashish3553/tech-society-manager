@@ -15,6 +15,7 @@ import MentorProfile from '../components/MentorProfile';        // Mentor profil
 import AdminProfile from '../components/AdminProfile';          // Admin profile summary component
 import ContactMessageCard from '../components/ContactMessageCard';// Component to display contact messages
 import AssignmentCard from '../components/AssignmentCard';      // Component to display assignment cards
+import AnnouncementForm from '../components/AnnouncementForm';
 
 function MentorDashboard() {
   const { auth } = useContext(AuthContext);
@@ -183,7 +184,7 @@ function MentorDashboard() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container bg-color min-h-screen mx-auto p-4 space-y-8">
       {/* Header: Display a different title based on role */}
       <h1 className="text-3xl font-bold mb-6">
         {isAdmin ? 'Admin Dashboard' : 'Mentor Dashboard'}
@@ -200,6 +201,15 @@ function MentorDashboard() {
         >
           {activeSection === 'briefing' ? 'Close Briefing Form' : 'Create/Update Briefing'}
         </button>
+
+        {(auth.user.role === 'mentor' || auth.user.role === 'admin') && (
+          <button
+          onClick={() => toggleSection('announcement')}
+          className="bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700 transition-colors"
+        >
+          {activeSection === 'announcement' ? 'Close Announcement Form' : 'Create Announcement'}
+        </button>
+        )}
         <button
           onClick={() => toggleSection('question')}
           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
@@ -269,6 +279,9 @@ function MentorDashboard() {
           onDelete={handleDeleteUser}
         />
       )}
+      {activeSection === 'announcement' && <AnnouncementForm onSuccess={() => toggleSection('announcement')} />}
+
+
       {activeSection === 'msgList' && (
         <MessageListSection 
           messages={allMessages}

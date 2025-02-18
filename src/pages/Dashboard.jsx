@@ -79,7 +79,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className=" bg-color min-h-screen container mx-auto p-4 space-y-8">
       <StudentProfile />
 
       {/* Toggle Buttons */}

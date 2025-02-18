@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/components/QuestionForm.jsx
+import React, { useState, useEffect } from 'react';
 import BasicTextEditor from './BasicTextEditor';
 import { toast } from 'react-toastify';
 import api from '../services/api';
@@ -20,21 +21,25 @@ const presetMajorTopics = [
   "Advanced Topics"
 ];
 
-function QuestionForm() {
-  const [questionData, setQuestionData] = useState({
-    title: '', 
-    explanation: '',
-    // Test cases will be stored as an array of objects:
-    testCases: [],
-    difficulty: 'easy',
-    tags: '',
-    repoCategory: 'question', // question or project
-    questionType: 'coding',   // if repoCategory === "question"
-    majorTopic: presetMajorTopics[0],
-    // Similar questions is an array of objects with title and url
-    similarQuestions: [],
-    codingPlatformLink: ''
-  });
+function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externalOnSubmit }) {
+  // If editing, pre-fill state with initialData; otherwise use defaults.
+  console.log("Initial data is: ", initialData)
+  const [questionData, setQuestionData] = useState(
+    initialData || {
+      title: '', 
+      explanation: '',
+      // Test cases will be stored as an array of objects:
+      testCases: [],
+      difficulty: 'easy',
+      tags: '',
+      repoCategory: 'question', // question or project
+      questionType: 'coding',   // if repoCategory === "question"
+      majorTopic: presetMajorTopics[0],
+      // Similar questions is an array of objects with title and url
+      similarQuestions: [],
+      codingPlatformLink: ''
+    }
+  );
 
   // State for new test case entry:
   const [newTestCase, setNewTestCase] = useState({ input: '', output: '', explanation: '' });
@@ -72,8 +77,10 @@ function QuestionForm() {
     }
   };
 
+  // Internal submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Prepare FormData payload:
     const formData = new FormData();
     formData.append('title', questionData.title);
     formData.append('explanation', questionData.explanation);
@@ -88,31 +95,36 @@ function QuestionForm() {
     formData.append('majorTopic', questionData.majorTopic);
     formData.append('similarQuestions', JSON.stringify(questionData.similarQuestions));
     formData.append('codingPlatformLink', questionData.codingPlatformLink);
-    // Note: Distribution tag is not appended because it defaults to "central" on creation.
 
     // (Optional) Debug FormData entries:
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     try {
-      await api.post('/assignments', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      toast.success('Item created successfully!');
-      // Reset state as needed
-      setQuestionData({
-        title: '',
-        explanation: '',
-        testCases: [],
-        difficulty: 'easy',
-        tags: '',
-        repoCategory: 'question',
-        questionType: 'coding',
-        majorTopic: presetMajorTopics[0],
-        similarQuestions: [],
-        codingPlatformLink: ''
-      });
+      // If external onSubmit prop is provided, use it (for edit)...
+      if (externalOnSubmit) {
+        await externalOnSubmit(questionData);
+      } else {
+        // Otherwise, create a new question:
+        await api.post('/assignments', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        toast.success('Item created successfully!');
+        // Reset state for a new question:
+        setQuestionData({
+          title: '',
+          explanation: '',
+          testCases: [],
+          difficulty: 'easy',
+          tags: '',
+          repoCategory: 'question',
+          questionType: 'coding',
+          majorTopic: presetMajorTopics[0],
+          similarQuestions: [],
+          codingPlatformLink: ''
+        });
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to create item.');
@@ -122,7 +134,7 @@ function QuestionForm() {
   return (
     <div className="bg-white rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">
-        Create {questionData.repoCategory === 'question' ? 'Question' : 'Project'}
+        {isEdit ? 'Edit Question' : `Create ${questionData.repoCategory === 'question' ? 'Question' : 'Project'}`}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
@@ -139,7 +151,7 @@ function QuestionForm() {
         {/* Content (Explanation) */}
         <div>
           <label className="block font-medium mb-1">Content:</label>
-          <BasicTextEditor onSave={handleEditorSave} />
+          <BasicTextEditor onSave={handleEditorSave} initialContent={questionData.explanation} />
         </div>
         {/* Test Cases Section */}
         <div>
@@ -282,9 +294,24 @@ function QuestionForm() {
             onChange={(e) => setQuestionData({ ...questionData, codingPlatformLink: e.target.value })}
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-          Create {questionData.repoCategory === 'question' ? 'Question' : 'Project'}
-        </button>
+        {/* Buttons */}
+        <div className="flex justify-end gap-4">
+          <button 
+            type="submit" 
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+          >
+            {isEdit ? 'Save Changes' : (questionData.repoCategory === 'question' ? 'Create Question' : 'Create Project')}
+          </button>
+          {isEdit && (
+            <button 
+              type="button" 
+              onClick={onCancel}
+              className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );

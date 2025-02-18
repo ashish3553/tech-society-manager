@@ -51,7 +51,7 @@ function Practice() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="bg-color min-h-screen container mx-auto p-4 space-y-8">
       {/* <h1 className="text-3xl font-bold mb-3 text-center">Practice Questions</h1> */}
       
       {/* Filter Form */}

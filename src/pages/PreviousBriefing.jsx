@@ -65,7 +65,7 @@ function PreviousArchive() {
   }, [activeTab]);
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="bg-color container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-6 text-center">Previous Archives</h1>
 
       {/* Toggle Buttons */}

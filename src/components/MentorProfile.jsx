@@ -31,6 +31,7 @@ function MentorProfile() {
       <h2 className="text-xl font-bold mb-2">Mentor Profile</h2>
       <p><strong>Name:</strong> {auth.user.name}</p>
       <p><strong>Email:</strong> {auth.user.email}</p>
+      <p><strong>Role:</strong> {auth.user.role}</p>
       <div className="flex flex-wrap gap-4 mt-4">
         <div className="bg-indigo-500 text-white px-3 py-1 rounded">
           Total Questions: {stats.totalQuestions}

@@ -39,19 +39,22 @@ function Registration() {
     if (profileImage) {
       formData.append('profileImage', profileImage);
     }
-  
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }  
     try {
       const res = await api.post('/auth/register', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Instead of logging the user in, display a message and redirect to a verification pending page.
       toast.success(res.data.msg || 'Registration successful! Please check your email for the verification code.');
-// Optionally store the email for verification purposes:
-localStorage.setItem('verificationEmail', email);
-navigate('/verify-otp');
+      localStorage.setItem('verificationEmail', email);
+      localStorage.setItem('registrationToken', res.data.token); // if using new registration route
+      navigate('/verify-otp');
     } catch (err) {
-      console.error('Registration error:', err.response.data);
-      toast.error(`Registration failed: ${err.response.data.msg || 'Unknown error'}`);
+      console.error('Registration error:', err);
+      const errorMsg = err.response?.data?.msg || 'Unknown error';
+      toast.error(`Registration failed: ${errorMsg}`);
     }
   };
 

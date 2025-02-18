@@ -17,7 +17,8 @@ function Login() {
       const res = await api.post('/auth/login', { email, password });
       console.log("Received data after login:", res.data);
       setAuth({ token: res.data.token, user: res.data.user });
-      navigate('/dashboard'); // Redirect to dashboard after successful login
+      const role = res.data.user.role
+      navigate(role==="student"?'/dashboard':'/mentor'); // Redirect to dashboard after successful login
     } catch (err) {
       console.error(err);
       toast.error('Login failed');

@@ -51,7 +51,7 @@ const SolutionDetailPage = () => {
   if (!solution) return <div>No solution available for this assignment.</div>;
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="bg-color max-w-3xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">{solution.title}</h1>
       {/* Display the solution content */}
       <div

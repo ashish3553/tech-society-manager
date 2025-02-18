@@ -73,7 +73,7 @@ function Doubts() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className=" bg-color min-h-screen container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-6">Doubts</h1>
       
       {/* Filter Form for All Authenticated Users */}
@@ -182,7 +182,7 @@ function Doubts() {
       {doubts.length === 0 ? (
         <p className="text-gray-500">No doubts available.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {doubts.map((doubt) => (
             <DoubtCard key={doubt._id} doubt={doubt} />
           ))}

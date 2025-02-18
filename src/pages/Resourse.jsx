@@ -77,7 +77,7 @@ function Resourse() {
   }
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container bg-color mx-auto p-8">
       <h2 className="text-4xl font-bold mb-8 text-center">All Resources</h2>
       
       {/* Top-Level Category Buttons */}
@@ -132,7 +132,7 @@ function Resourse() {
             </div>
           </div>
           {/* Left panel for md+ screens */}
-          <div className="hidden md:block md:w-1/5 border-r md:pr-4 overflow-y-auto max-h-screen scrollbar-thin">
+          <div className="hidden md:block md:w-1/5  border-r border-cyan-700 md:pr-4 overflow-y-auto max-h-screen scrollbar-thin">
             <div className="mb-6 flex gap-2">
               <button 
                 onClick={() => setActiveQuestionType('coding')}

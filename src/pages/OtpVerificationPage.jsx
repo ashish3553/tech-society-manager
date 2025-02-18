@@ -5,35 +5,40 @@ import api from '../services/api';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/AuthContext';
 
-
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-    const { setAuth } = useContext(AuthContext);
-  
+  const { setAuth } = useContext(AuthContext);
+  const [registrationToken, setRegistrationToken] = useState('');
 
-  // Optionally, load the email from localStorage if available.
+  // Load email and registration token from localStorage
   useEffect(() => {
     const storedEmail = localStorage.getItem('verificationEmail');
+    const storedToken = localStorage.getItem('registrationToken');
     if (storedEmail) {
       setEmail(storedEmail);
+    }
+    if (storedToken) {
+      setRegistrationToken(storedToken);
     }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/verify-otp', { email, otp });
+      // Send the email, otp, and token to the verification endpoint
+      const res = await api.post('/auth/verify-otp', { email, otp, token: registrationToken });
       toast.success(res.data.msg);
       setAuth({ token: res.data.token, user: res.data.user });
-      // Optionally clear the stored email
+      // Clear stored values
       localStorage.removeItem('verificationEmail');
-      
+      localStorage.removeItem('registrationToken');
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
-      toast.error(err.response.data.msg || 'Verification failed.');
+      const errorMsg = err.response?.data?.msg || 'Verification failed.';
+      toast.error(errorMsg);
     }
   };
 
@@ -50,8 +55,8 @@ const VerifyOTP = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded p-2"
+              readOnly
+              className="w-full border rounded p-2 bg-gray-100"
               required
             />
           </div>

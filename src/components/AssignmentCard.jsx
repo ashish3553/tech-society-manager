@@ -1,5 +1,5 @@
 // src/components/AssignmentCard.jsx
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -8,12 +8,32 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
   const { auth } = useContext(AuthContext);
   const currentUserId = auth?.user?.id;
   const currentUserRole = auth?.user?.role;
+  console.log("Here is your assignment: ", assignment);
 
   // Local state for distribution tag (optimistic update)
   const [localTag, setLocalTag] = useState(assignment.distributionTag);
   // State for modal confirmation and pending tag update
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingTag, setPendingTag] = useState('');
+  // State for tag dropdown menu
+  const [showTagMenu, setShowTagMenu] = useState(false);
+
+   // Ref for the dropdown container
+   const dropdownRef = useRef(null);
+
+    // Close dropdown when clicking outside of it
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setShowTagMenu(false);
+        }
+      };
+  
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
 
   // When the assignment prop changes, update localTag
   useEffect(() => {
@@ -48,12 +68,12 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
       case 'hw':
         return 'bg-red-500';
       case 'cw':
-        return 'bg-yellow-500';
+        return 'bg-yellow-900';
       case 'pw':
       case 'practice':
         return 'bg-blue-500';
       case 'hm':
-        return 'bg-purple-500';
+        return 'bg-green-900';
       case 'personal':
         return 'bg-green-500';
       default:
@@ -67,7 +87,7 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
       case 'solved':
         return 'bg-green-500';
       case 'partially solved':
-        return 'bg-yellow-500';
+        return 'bg-yellow-800';
       case 'having doubt':
       case 'not understanding':
         return 'bg-red-500';
@@ -100,10 +120,10 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
     }
   };
 
-  // Handler when a tag button is clicked
+  // Handler when a tag option is clicked from dropdown
   const handleTagClick = (tag) => {
-    // Set pending tag and open confirmation modal
     setPendingTag(tag);
+    setShowTagMenu(false);
     setShowConfirmModal(true);
   };
 
@@ -123,13 +143,13 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
     <div className="relative bg-white border border-gray-200 rounded-lg shadow-lg transition-shadow duration-300 p-6 flex flex-col">
       {/* Main Content */}
       <div className="space-y-3">
-        <h2 className="text-2xl font-extrabold text-indigo-700">{assignment.title}</h2>
+        <h2 className="text-2xl font-bold text-black-700">{assignment.title}</h2>
         {assignment.tags && assignment.tags.length > 0 && (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm font-medium text-gray-600">
             <strong>Tags:</strong> {assignment.tags.join(', ')}
           </p>
         )}
-        <p className="text-sm text-gray-600">
+        <p className="text-sm font-medium text-gray-600">
           <strong>Difficulty:</strong> {assignment.difficulty}
         </p>
         {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
@@ -152,30 +172,47 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
         )}
       </div>
 
-      {/* Distribution Buttons for Mentor/Admin */}
+      {/* Three Dot Icon for Distribution Options (Mentor/Admin) */}
       {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
-        <div className="mt-4 flex justify-around">
+        <div className="absolute bottom-2 right-2 " ref={dropdownRef}>
           <button
-            type="button"
-            onClick={() => handleTagClick('hw')}
-            className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+            onClick={() => setShowTagMenu((prev) => !prev)}
+            className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
           >
-            HW
+            {/* Three-dot icon */}
+            <svg
+              className="w-6 h-6 text-gray-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="5" cy="12" r="2" />
+              <circle cx="12" cy="12" r="2" />
+              <circle cx="19" cy="12" r="2" />
+            </svg>
           </button>
-          <button
-            type="button"
-            onClick={() => handleTagClick('practice')}
-            className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-          >
-            Practice
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTagClick('cw')}
-            className="bg-yellow-500 text-white px-3 py-1 rounded text-xs hover:bg-yellow-600"
-          >
-            CW
-          </button>
+          {showTagMenu && (
+            <div className="absolute bottom-full right-0 mb-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-10">
+              <button
+                onClick={() => handleTagClick('hw')}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                HW
+              </button>
+              <button
+                onClick={() => handleTagClick('practice')}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Practice
+              </button>
+              <button
+                onClick={() => handleTagClick('cw')}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                CW
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -183,17 +220,17 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
       <div className="mt-2 flex items-center justify-between border-t pt-2">
         <Link
           to={`/assignments/${assignment._id}`}
-          className="bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700"
+          className="bg-indigo-500 text-white font-medium px-3 py-1 rounded text-xs hover:bg-indigo-700"
         >
           View Details
         </Link>
         <div className="flex items-center gap-2">
-          {currentUserRole === 'student' && (
+          {(currentUserRole === 'student' || currentUserRole === 'volunteer') && (
             <span className={`text-white text-xs px-2 py-1 rounded ${getResponseBadgeColor(studentResponse.responseStatus)}`}>
               {studentResponse.responseStatus}
             </span>
           )}
-          <span className={`px-3 py-1 text-sm font-bold text-white ${getBadgeColor(localTag)}`}>
+          <span className={`px-1 absolute top-1 right-1 rounded-md py-0 text-sm font-bold text-white ${getBadgeColor(localTag)}`}>
             {localTag.toUpperCase()}
           </span>
         </div>

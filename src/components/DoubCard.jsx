@@ -28,7 +28,7 @@ if (doubt.conversation && doubt.conversation.length > 0) {
   // Extract assignment tag (for category display)
   const category = doubt.assignment && doubt.assignment.assignmentTag
     ? doubt.assignment.assignmentTag.toLowerCase()
-    : "n/a";
+    : null;
 
   // Function to choose a background color based on the assignment category
   const getCategoryBadgeColor = (tag) => {
@@ -74,9 +74,9 @@ if (doubt.conversation && doubt.conversation.length > 0) {
         <h3 className="text-lg font-semibold">
           {doubt.assignment ? doubt.assignment.title : "Assignment Title Unavailable"}
         </h3>
-        <span className={`text-white text-xs px-2 py-1 rounded ${getCategoryBadgeColor(category)}`}>
+       {category !==null && <span className={`text-white text-xs px-2 py-1 rounded ${getCategoryBadgeColor(category)}`}>
           {category.toUpperCase()}
-        </span>
+        </span>}
       </div>
 
       {/* Student Info */}

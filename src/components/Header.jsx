@@ -66,14 +66,14 @@ function Header() {
                 {role === 'mentor' && (
                   <li>
                     <Link to="/mentor" className="hover:underline">
-                      Mentor Dashboard
+                       Dashboard
                     </Link>
                   </li>
                 )}
                 {role === 'admin' && (
                   <li>
                     <Link to="/mentor" className="hover:underline">
-                      Admin Dashboard
+                       Dashboard
                     </Link>
                   </li>
                 )}
@@ -106,12 +106,13 @@ function Header() {
                 )}
               </>
             )}
-
-            <li>
+            {auth?null: <li>
               <Link to="/contact" className="hover:underline">
                 Contact
               </Link>
-            </li>
+            </li>}
+
+           
 
             {/* Logout / Login button */}
             {auth ? (
