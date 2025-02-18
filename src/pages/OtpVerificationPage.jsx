@@ -75,9 +75,9 @@ const VerifyOTP = () => {
             type="submit" 
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            Verify Email
+            Verify your Email
           </button>
-        </form>
+        </form> 
         {/* Optionally add a "Resend OTP" button here */}
       </div>
     </div>
