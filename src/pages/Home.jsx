@@ -154,8 +154,7 @@ function Home() {
                 onEdit={handleEditAnnouncement}
                 onDelete={handleDeleteAnnouncement}
                 isEditable={
-                  auth.user &&
-                  (auth.user.role === 'mentor' || auth.user.role === 'admin')
+                  auth?.user?.role === 'mentor' || auth?.user?.role === 'admin'
                 }
               />
             ))}
