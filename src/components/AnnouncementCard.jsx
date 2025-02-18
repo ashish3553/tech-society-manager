@@ -1,7 +1,7 @@
 // src/components/AnnouncementCard.jsx
 import React, { useState } from 'react';
 
-function AnnouncementCard({ announcement, onEdit, onDelete, isEditable }) {
+function AnnouncementCard({ announcement, onEdit, onDelete, isEditable=false }) {
   const displayDate = new Date(announcement.createdAt).toLocaleString('en-IN');
   const [showModal, setShowModal] = useState(false);
   // Local state for edited fields
