@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BasicTextEditor from './BasicTextEditor';
 import { toast } from 'react-toastify';
-import SyncfusionEditor from './SyncfusionEditor';
+// import SyncfusionEditor from './SyncfusionEditor';
 import api from '../services/api';
 
 const presetMajorTopics = [
