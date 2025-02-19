@@ -96,19 +96,31 @@ useEffect(() => {
 
 
   // Handler for student response submission
-  const handleResponseSubmit = async (responseData) => {
-    // e.preventDefault();
-    console.log("Response data aaya hai:", responseData)
-    try {
-      await api.put(`/assignments/${id}/status`, responseData);
-      toast.success('Response updated successfully!');
-      const res = await api.get(`/assignments/${id}`);
-      setAssignment(res.data);
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to update response.');
+ // Handler for student response submission
+const handleResponseSubmit = async (responseData) => {
+  console.log("Response data received:", responseData);
+  try {
+    // Update the assignment's response
+    await api.put(`/assignments/${id}/status`, responseData);
+    toast.success('Response updated successfully!');
+    
+    // If responseStatus is not "solved", post a doubt.
+    if (responseData.responseStatus !== "solved") {
+      const doubtPayload = {
+        assignmentId: id,
+        doubtText: responseData.learningNotes || "No additional details provided."
+      };
+      await api.post('/doubts', doubtPayload);
     }
-  };
+    
+    // Refresh the assignment details
+    const res = await api.get(`/assignments/${id}`);
+    setAssignment(res.data);
+  } catch (err) {
+    console.error(err);
+    toast.error('Failed to update response.');
+  }
+};
 
   // Fetch the solution from your API
   useEffect(() => {

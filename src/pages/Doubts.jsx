@@ -61,6 +61,7 @@ function Doubts() {
       const res = await api.get('/doubts/filter-doubts', { params });
       setDoubts(res.data.doubts);
       setTotal(res.data.total);
+      console.log("Doubts are: ", res.data)
       console.log("Doubts length is: ", res.data.doubts.length)
       setIsDoubtLoaded(true)
       setLoading(false);

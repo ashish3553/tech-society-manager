@@ -51,7 +51,7 @@ function StudentSolutions() {
       setLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to fetch your solutions");
+      // toast.error("Failed to fetch your solutions");  ---->> later on when solution is edited.
       setLoading(false);
     }
   };
