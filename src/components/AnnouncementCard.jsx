@@ -46,13 +46,14 @@ function AnnouncementCard({ announcement, onEdit, onDelete, isEditable=false }) 
         <p className="text-gray-700 mb-2">{announcement.body}</p>
         {announcement.links && announcement.links.length > 0 && (
   <p>
-    Link: <a 
+    Link:{" "}
+    <a 
       href={announcement.links[0]} 
       target="_blank" 
       rel="noopener noreferrer"
       className="text-blue-500 hover:underline"
     >
-      {announcement.links[0]}
+      Click here
     </a>
   </p>
 )}

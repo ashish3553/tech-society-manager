@@ -92,7 +92,7 @@ const StudentResponseForm = ({
         </div>
         {responseData.responseStatus === 'solved' && (
           <div>
-            <label className="block font-medium mb-1">Submission URL (Proof):</label>
+            <label className="block font-medium mb-1">Submission URL (Optional):</label>
             <input 
               type="text"
               value={responseData.submissionUrl}
