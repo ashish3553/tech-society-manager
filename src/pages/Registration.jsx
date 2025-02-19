@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { HashLoader } from "react-spinners";
+
 
 function Registration() {
   const [name, setName] = useState('');
@@ -12,6 +14,8 @@ function Registration() {
   const [branch, setBranch] = useState('');
   const [year, setYear] = useState('');
   const [profileImage, setProfileImage] = useState(null);
+  const [loading,setLoading]=useState(false)
+
 
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -44,14 +48,17 @@ function Registration() {
       console.log(key, value);
     }  
     try {
+      setLoading(true)
       const res = await api.post('/auth/register', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success(res.data.msg || 'Registration successful! Please check your email for the verification code.');
       localStorage.setItem('verificationEmail', email);
       localStorage.setItem('registrationToken', res.data.token); // if using new registration route
+      setLoading(false)
       navigate('/verify-otp');
     } catch (err) {
+      setLoading(false)
       console.error('Registration error:', err);
       const errorMsg = err.response?.data?.msg || 'Unknown error';
       toast.error(`Registration failed: ${errorMsg}`);
@@ -125,7 +132,8 @@ function Registration() {
             type="submit" 
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            Register
+                  {loading ?    <HashLoader className="text-center" size={35} color="red" />:"Register"}
+
           </button>
         </form>
         <p className="mt-4 text-center">

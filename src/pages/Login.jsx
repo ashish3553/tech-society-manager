@@ -4,22 +4,30 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { HashLoader } from "react-spinners";
+
+
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [loading,setLoading]=useState(false)
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const res = await api.post('/auth/login', { email, password });
       console.log("Received data after login:", res.data);
       setAuth({ token: res.data.token, user: res.data.user });
       const role = res.data.user.role
+      setLoading(false)
       navigate(role==="student"?'/dashboard':'/mentor'); // Redirect to dashboard after successful login
     } catch (err) {
+      setLoading(false)
       console.error(err);
       toast.error('Login failed');
     }
@@ -54,7 +62,9 @@ function Login() {
             type="submit" 
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            Login
+       {loading ?    <HashLoader className="text-center" size={35} color="red" />:"Login"}
+            
+            
           </button>
         </form>
         <div className="mt-4 flex flex-col items-center">

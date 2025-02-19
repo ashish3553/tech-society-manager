@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/AuthContext';
+import { HashLoader } from "react-spinners";
+
 
 const VerifyOTP = () => {
   const navigate = useNavigate();
@@ -11,6 +13,8 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState('');
   const { setAuth } = useContext(AuthContext);
   const [registrationToken, setRegistrationToken] = useState('');
+  const [loading,setLoading]=useState(false)
+
 
   // Load email and registration token from localStorage
   useEffect(() => {
@@ -28,14 +32,17 @@ const VerifyOTP = () => {
     e.preventDefault();
     try {
       // Send the email, otp, and token to the verification endpoint
+      setLoading(true)
       const res = await api.post('/auth/verify-otp', { email, otp, token: registrationToken });
       toast.success(res.data.msg);
       setAuth({ token: res.data.token, user: res.data.user });
       // Clear stored values
       localStorage.removeItem('verificationEmail');
       localStorage.removeItem('registrationToken');
+      setLoading(false)
       navigate('/dashboard');
     } catch (err) {
+      setLoading(false)
       console.error(err);
       const errorMsg = err.response?.data?.msg || 'Verification failed.';
       toast.error(errorMsg);
