@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import api from '../services/api';
 import AdvancedTextEditor from './AdvancedTextEditor';
+import { Link } from 'react-router-dom';
 
 const MentorSolutionReview = ({ assignmentId, studentResponse, onReviewUpdated }) => {
   // Local state for mentor review fields
@@ -34,18 +35,44 @@ const MentorSolutionReview = ({ assignmentId, studentResponse, onReviewUpdated }
     }
   };
 
+  console.log("Here is initial content:", studentResponse)
+
   return (
     <div className="bg-white p-4 rounded shadow my-4">
-      <h3 className="text-xl font-bold mb-2">Review Student Solution</h3>
+      <div className=' font-bold text-center text-orange-500 text-4xl mb-4'>Student Solution</div>
       <div className="mb-4">
-        <h4 className="font-semibold mb-1">Student's Solution:</h4>
+
         {/* AdvancedTextEditor is used here so that mentor can see and edit the solution */}
-        <AdvancedTextEditor 
+       
+      
+
+       {solutionContent && <AdvancedTextEditor 
           onChange={setSolutionContent}
           initialContent={solutionContent}
-        />
+        />}
+
+<div className="bg-white p-4 rounded shadow border">
+  <p className="font-semibold mb-2">
+    Submitted URL:
+    <a 
+      href={studentResponse.submissionUrl} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="ml-2 text-blue-600 hover:underline"
+    >
+      Click Here
+    </a>
+  </p>
+  <p className="font-semibold">
+    Learning Notes:
+    <span className="ml-2 text-gray-800">{studentResponse.learningNotes}</span>
+  </p>
+</div>
+
       </div>
       <form onSubmit={handleReviewSubmit} className="space-y-4">
+
+        <div className=' font-bold text-center text-orange-500 text-4xl'>Mentor Review</div>
         <div>
           <label className="block font-medium mb-1">Review Status:</label>
           <select 

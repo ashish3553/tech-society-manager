@@ -190,6 +190,8 @@ function SolutionReview() {
           </button>
           {assignmentDetail ? (
             <>
+                  <div className=' font-bold text-center text-orange-500 text-4xl mb-4'>Assignment Details</div>
+
               <AssignmentDisplay assignment={assignmentDetail} />
               <div className="my-4">
                 <MentorSolutionReview 
