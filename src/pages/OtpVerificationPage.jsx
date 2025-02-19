@@ -82,7 +82,8 @@ const VerifyOTP = () => {
             type="submit" 
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            Verify your Email
+      {loading ?  <HashLoader className="text-center" size={35} color="white" />:"Verify your email"}
+
           </button>
         </form> 
         {/* Optionally add a "Resend OTP" button here */}
