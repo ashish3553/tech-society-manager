@@ -26,7 +26,7 @@ function MessageCard({ message,isHome }) {
       {message.links && message.links.length > 0 && (
         <div className="mb-4">
           <p className="font-bold text-blue-600 text-base mb-1">Links:</p>
-          <ul className="list-disc list-inside space-y-1">
+          <ul className="list-none list-inside space-y-1">
             {message.links.map((link, index) => (
               <li key={index}>
                 <a
