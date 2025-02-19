@@ -1,10 +1,13 @@
 // src/components/BriefingCard.jsx
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { HashLoader } from "react-spinners";
+
 
 const BriefingCard = ({ briefing, onEdit, onDelete }) => {
   const { auth } = useContext(AuthContext);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   console.log("Recieved Briefing is: ", briefing)
 

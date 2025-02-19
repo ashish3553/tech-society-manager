@@ -2,28 +2,53 @@
 import React from 'react';
 
 const AssignmentDisplay = ({ assignment }) => {
+
+  console.log("Recieved asssignment is: ", assignment)
+
+
+  const creater = assignment.createdBy.name || "Dummy"
+  const lastModifier = assignment.lastModifiedBy.name ||"Dummy"
   const displayDate = new Date(assignment.updatedAt || assignment.createdAt).toLocaleString('en-IN');
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h2 className="text-3xl font-bold mb-4">{assignment.title}</h2>
+      
+      {/* Explanation Box */}
       <div className="mb-4">
         <h3 className="text-2xl font-semibold mb-2">Explanation</h3>
-        <div className="prose" dangerouslySetInnerHTML={{ __html: assignment.explanation }} />
+        <div 
+          className="border rounded p-4 bg-gray-50 whitespace-pre-wrap text-gray-800"
+          dangerouslySetInnerHTML={{ __html: assignment.explanation }}
+        />
       </div>
+      
+      {/* Test Cases in Grid */}
       {assignment.testCases && assignment.testCases.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold mb-2">Test Cases</h3>
-          <ul className="list-disc list-inside">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {assignment.testCases.map((tc, idx) => (
-              <li  className=' list-none' key={idx}>
-                <p><strong>Input:</strong> {tc.input}</p>
-                <p><strong>Output:</strong> {tc.output}</p>
-                {tc.explanation && <p><strong>Explanation:</strong> {tc.explanation}</p>}
-              </li>
+              <div key={idx} className="border rounded p-4 bg-gray-50">
+                <div className="mb-2">
+                  <span className="font-bold block">Input {idx+1}</span>
+                  <pre className="whitespace-pre-wrap text-gray-800 text-sm">{tc.input}</pre>
+                </div>
+                <div className="mb-2">
+                  <span className="font-bold block">Output</span>
+                  <pre className="whitespace-pre-wrap text-gray-800 text-sm">{tc.output}</pre>
+                </div>
+                {tc.explanation && (
+                  <div className="mt-2  pt-2">
+                    <span className="font-bold block">Explanation:</span>
+                    <p className="whitespace-pre-wrap text-gray-700 text-sm">{tc.explanation}</p>
+                  </div>
+                )}
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
+
       {assignment.files && assignment.files.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold mb-2">Attachments</h3>
@@ -36,6 +61,7 @@ const AssignmentDisplay = ({ assignment }) => {
           </div>
         </div>
       )}
+
       {assignment.codingPlatformLink && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold mb-2">Coding Platform</h3>
@@ -44,6 +70,7 @@ const AssignmentDisplay = ({ assignment }) => {
           </a>
         </div>
       )}
+
       {assignment.similarQuestions && assignment.similarQuestions.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold mb-2">Similar Questions</h3>
@@ -58,10 +85,12 @@ const AssignmentDisplay = ({ assignment }) => {
           </ul>
         </div>
       )}
-      {assignment.createdBy && (
+
+      {creater && (
         <div className="text-gray-600 mb-4">
-          <p><strong>Uploaded By:</strong> {assignment.createdBy.name}</p>
-          <p><strong>Mentor Branch:</strong> {assignment.createdBy.branch || 'N/A'}</p>
+          <p><strong>Uploaded By:</strong> {creater}</p>
+          <p><strong>Last modified By:</strong> {lastModifier}</p>
+          {/* <p><strong>Mentor Branch:</strong> {assignment.createdBy.branch || 'N/A'}</p> */}
         </div>
       )}
       <div className="text-gray-500 text-xs text-right">Last Updated: {displayDate}</div>

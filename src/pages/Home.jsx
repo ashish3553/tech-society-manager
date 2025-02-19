@@ -7,6 +7,8 @@ import BriefingCard from '../components/BriefingCard';
 import AnnouncementCard from '../components/AnnouncementCard';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/AuthContext';
+import { HashLoader } from "react-spinners";
+
 
 function Home() {
   const { auth } = useContext(AuthContext);
@@ -15,6 +17,7 @@ function Home() {
   const [announcements, setAnnouncements] = useState([]);
   const [homeworkAssignments, setHomeworkAssignments] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [loading,setLoading]=useState(false)
 
 
   // For editing a briefing
@@ -24,9 +27,12 @@ function Home() {
   // Fetch Briefings
   const fetchBriefings = async () => {
     try {
+      setLoading(true)
       const res = await api.get('/dailyBriefing/recent');
+      setLoading(false)
       setBriefings(res.data);
     } catch (err) {
+      setLoading(false)
       console.error(err);
       toast.error('Failed to fetch recent briefings.');
     }
@@ -40,9 +46,12 @@ function Home() {
   useEffect(() => {
     const fetchRecentMentorMessages = async () => {
       try {
+        setLoading(true)
         const res = await api.get('/messages/recent-mentor');
+        setLoading(false)
         setMessages(res.data);
       } catch (err) {
+        setLoading(false)
         console.error(err);
         toast.error('Failed to fetch recent mentor messages.');
       }
@@ -54,9 +63,12 @@ function Home() {
   useEffect(() => {
     const fetchHomeworkAssignments = async () => {
       try {
+        setLoading(true)
         const res = await api.get('/assignments/home');
+      
         setHomeworkAssignments(res.data);
       } catch (err) {
+        setLoading(false)
         console.error(err);
         toast.error('Failed to fetch homework assignments.');
       }
@@ -67,9 +79,12 @@ function Home() {
   // Fetch Announcements (max 2)
   const fetchAnnouncements = async () => {
     try {
+      setLoading(true)
       const res = await api.get('/messages/announcement');
+      setLoading(false)
       setAnnouncements(res.data);
     } catch (err) {
+      setLoading(false)
       console.error(err);
       toast.error('Failed to load announcements.');
     }
@@ -88,13 +103,16 @@ function Home() {
   const handleUpdateBriefing = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       await api.put(`/dailyBriefing/${selectedBriefing._id}`, selectedBriefing);
       toast.success('Briefing updated successfully!');
+      setLoading(false)
       setRefresh(prev => !prev); 
       setShowEditModal(false);
       setSelectedBriefing(null);
       fetchBriefings();
     } catch (error) {
+      setLoading(false)
       console.error(error);
       toast.error('Failed to update briefing.');
     }
@@ -143,8 +161,8 @@ function Home() {
       
       {/* Announcements Section */}
       <h2 className="text-2xl font-bold mb-2">Recent Announcements</h2>
-
-      {announcements.length > 0 && (
+      {loading &&    <HashLoader className="text-center" size={35} color="red" />}
+      {!loading && announcements.length > 0 && (
         <section className=" p-4 rounded shadow overflow-x-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {announcements.map((announcement) => (
@@ -165,7 +183,9 @@ function Home() {
       {/* Recent Class Briefings Section */}
       <section>
         <h2 className="text-2xl font-bold mb-4">Recent Class Briefings</h2>
-        {briefings.length === 0 ? (
+        {loading &&    <HashLoader className="text-center" size={35} color="red" />}
+
+        {!loading && briefings.length === 0 ? (
           <p className="text-gray-500">No briefings available.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -244,7 +264,8 @@ function Home() {
                   type="submit"
                   className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
                 >
-                  Save Changes
+                  {loading &&    <HashLoader className="text-center px-4 py-2" size={35} color="white" />}
+                  {!loading &&  "Save Changes"}
                 </button>
               </div>
             </form>

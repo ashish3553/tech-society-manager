@@ -22,6 +22,8 @@ import VerifyEmailPending from '../pages/VerifyEmailPending';
 import VerifyOTP from '../pages/OtpVerificationPage';
 import ForgotPassword from '../pages/ForgetPassword';
 import ResetPassword from '../pages/ResetPassword';
+import SolutionReview from '../pages/SolutionReview';
+import StudentSolutions from '../pages/StudentSolutionPage';
 
 function AppRoutes() {
   return (
@@ -44,6 +46,8 @@ function AppRoutes() {
       <Route path="/doubts" element={<Doubts/>} />
       <Route path="/assignments/:id" element={<AssignmentDetails />} />
       <Route path="/solution/:assignmentId" element={<SolutionEditorPage />} />
+      <Route path="/solutions" element={<SolutionReview />} />
+      <Route path="/Student-solutions" element={<StudentSolutions/>} />
 
 
       <Route path="/doubts" element={<Doubts />} />

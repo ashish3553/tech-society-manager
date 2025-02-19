@@ -1,0 +1,16 @@
+/* Ensure the toolbar remains visible in fullscreen mode */
+.CodeMirror-fullscreen .editor-toolbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: #fff; /* Optional: set a background */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  /* If needed, ensure the exit fullscreen button is visible */
+  .CodeMirror-fullscreen .editor-toolbar .fa-compress {
+    display: inline-block !important;
+  }
+  

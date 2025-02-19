@@ -65,36 +65,40 @@ function AssignmentDetails() {
     fetchAssignment();
   }, [id]);
 
-  // Preload student response if available
-  useEffect(() => {
-    if (assignment && auth && auth.user && assignment.responses) {
-      const currentUserId = auth.user.id;
-      const found = assignment.responses.find((resp) => {
-        const studentId =
-          typeof resp.student === 'object' && resp.student !== null && resp.student._id
-            ? String(resp.student._id)
-            : String(resp.student);
-        return studentId === String(currentUserId);
+ // In AssignmentDetails.jsx, inside the useEffect that preloads student response:
+useEffect(() => {
+  if (assignment && auth && auth.user && assignment.responses) {
+    const currentUserId = auth.user.id;
+    const found = assignment.responses.find((resp) => {
+      const studentId =
+        typeof resp.student === 'object' && resp.student !== null && resp.student._id
+          ? String(resp.student._id)
+          : String(resp.student);
+      return studentId === String(currentUserId);
+    });
+    if (found) {
+      setResponseData({
+        responseStatus: found.responseStatus || '',
+        submissionUrl: found.submissionUrl || '',
+        learningNotes: found.learningNotes || '',
+        studentSolution: found.studentSolution || ''  // preload student's solution if available
       });
-      if (found) {
-        setResponseData({
-          responseStatus: found.responseStatus || '',
-          submissionUrl: found.submissionUrl || '',
-          learningNotes: found.learningNotes || ''
-        });
-      } else {
-        setResponseData({
-          responseStatus: 'not attempted',
-          submissionUrl: '',
-          learningNotes: ''
-        });
-      }
+    } else {
+      setResponseData({
+        responseStatus: 'not attempted',
+        submissionUrl: '',
+        learningNotes: '',
+        studentSolution: ''
+      });
     }
-  }, [assignment, auth]);
+  }
+}, [assignment, auth]);
+
 
   // Handler for student response submission
-  const handleResponseSubmit = async (e) => {
-    e.preventDefault();
+  const handleResponseSubmit = async (responseData) => {
+    // e.preventDefault();
+    console.log("Response data aaya hai:", responseData)
     try {
       await api.put(`/assignments/${id}/status`, responseData);
       toast.success('Response updated successfully!');
@@ -154,8 +158,8 @@ function AssignmentDetails() {
   };
 
   // Handler for saving edited assignment details (mentor)
-  const handleAssignmentEditSubmit = async (e) => {
-    e.preventDefault();
+  const handleAssignmentEditSubmit = async (editData) => {
+    // e.preventDefault();
     try {
       const updatePayload = {
         ...editData,
@@ -195,7 +199,7 @@ function AssignmentDetails() {
   const displayDate = new Date(assignment.updatedAt || assignment.createdAt).toLocaleString('en-IN');
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container bg-color min-h-screen mx-auto p-4 space-y-8">
       {/* If mentor can respond, show a merged block with assignment display and student response */}
       {canRespond ? (
         <div className="border rounded-lg shadow p-4 md:flex md:items-stretch">
@@ -210,7 +214,7 @@ function AssignmentDetails() {
                 responseData={responseData} 
                 setResponseData={setResponseData} 
                 onSubmit={handleResponseSubmit} 
-                solution_content={solutionContent || {}} 
+                initialContent={solutionContent || {}} 
                 showSolution={showSolutionInline}
                 setShowSolution={setShowSolutionInline}
               />

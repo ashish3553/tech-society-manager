@@ -1,9 +1,17 @@
 // src/components/BasicTextEditor.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 
-function BasicTextEditor({ onSave }) {
+const BasicTextEditor = forwardRef(({ onSave, initialContent }, ref) => {
   const editorRef = useRef(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialContent || "");
+
+  // When initialContent changes, update the editor's innerHTML.
+  useEffect(() => {
+    if (editorRef.current && initialContent) {
+      editorRef.current.innerHTML = initialContent;
+      setContent(initialContent);
+    }
+  }, [initialContent]);
 
   const handleFormat = (command) => {
     document.execCommand(command, false, null);
@@ -27,16 +35,24 @@ function BasicTextEditor({ onSave }) {
     }
   };
 
+  // Save the current editor content.
   const handleSave = () => {
     if (editorRef.current) {
       const htmlContent = editorRef.current.innerHTML;
-      onSave(htmlContent);
+      onSave && onSave(htmlContent);
+      return htmlContent;
     }
+    return "";
   };
+
+  // Expose a triggerSave method to the parent.
+  useImperativeHandle(ref, () => ({
+    triggerSave: handleSave
+  }));
 
   return (
     <div className="basic-text-editor max-w-2xl mx-auto p-4">
-      <div className="toolbar flex items-center gap-2 mb-4">
+      <div className="toolbar flex flex-wrap items-center gap-2 mb-4">
         <button
           type="button"
           onClick={() => handleFormat('bold')}
@@ -71,8 +87,9 @@ function BasicTextEditor({ onSave }) {
         className="border p-4 min-h-[200px] rounded"
         onInput={(e) => setContent(e.currentTarget.innerHTML)}
       ></div>
+      {/* Optional save button if you want manual saving */}
       <button
-      type='button'
+        type='button'
         onClick={handleSave}
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
       >
@@ -80,6 +97,6 @@ function BasicTextEditor({ onSave }) {
       </button>
     </div>
   );
-}
+});
 
 export default BasicTextEditor;

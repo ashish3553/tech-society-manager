@@ -104,8 +104,10 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
   const formattedDate = displayDate ? displayDate.toLocaleString('en-IN') : '';
 
   // Mentor tracking info
-  const creator = assignment.createdBy;
-  const modifier = assignment.lastModifiedBy;
+  const creator = assignment.createdBy.name;
+  const modifier = assignment.lastModifiedBy.name;
+
+  console.log("name and role info", assignment, creator)
 
   // Optimistic UI update: call this function to update distribution tag after confirmation.
   const updateTag = async (newTag) => {
@@ -156,7 +158,7 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
           <div className="text-sm text-gray-600">
             {creator && (
               <p>
-                <strong>Created by:</strong> {creator.name} ({creator.role})
+                <strong>Created by:</strong> {creator}
               </p>
             )}
             {creator &&

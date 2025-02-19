@@ -1,7 +1,8 @@
 // src/components/QuestionForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import BasicTextEditor from './BasicTextEditor';
 import { toast } from 'react-toastify';
+import SyncfusionEditor from './SyncfusionEditor';
 import api from '../services/api';
 
 const presetMajorTopics = [
@@ -22,36 +23,83 @@ const presetMajorTopics = [
 ];
 
 function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externalOnSubmit }) {
-  // If editing, pre-fill state with initialData; otherwise use defaults.
-  console.log("Initial data is: ", initialData)
+  // Helper to parse JSON fields if necessary.
+  const parseData = (data) => ({
+    ...data,
+    testCases: typeof data.testCases === 'string'
+      ? JSON.parse(data.testCases)
+      : data.testCases || [],
+    similarQuestions: typeof data.similarQuestions === 'string'
+      ? JSON.parse(data.similarQuestions).map(item => ({
+          title: item.title,
+          url: item.url
+        }))
+      : Array.isArray(data.similarQuestions)
+        ? data.similarQuestions.map(item => ({
+            title: item.title,
+            url: item.url
+          }))
+        : [],
+  });
+
   const [questionData, setQuestionData] = useState(
-    initialData || {
+    initialData ? parseData(initialData) : {
       title: '', 
       explanation: '',
-      // Test cases will be stored as an array of objects:
       testCases: [],
       difficulty: 'easy',
       tags: '',
-      repoCategory: 'question', // question or project
-      questionType: 'coding',   // if repoCategory === "question"
+      repoCategory: 'question',
+      questionType: 'coding',
       majorTopic: presetMajorTopics[0],
-      // Similar questions is an array of objects with title and url
       similarQuestions: [],
       codingPlatformLink: ''
     }
   );
+
+  useEffect(() => {
+    if (initialData) {
+      setQuestionData(parseData(initialData));
+    }
+  }, [initialData]);
 
   // State for new test case entry:
   const [newTestCase, setNewTestCase] = useState({ input: '', output: '', explanation: '' });
   // State for new similar question:
   const [newSimilar, setNewSimilar] = useState({ title: '', url: '' });
 
-  // Handler for BasicTextEditor to save explanation:
+  // Ref for the BasicTextEditor
+  const editorRef = useRef(null);
+
+  // Handler for BasicTextEditor to update explanation.
   const handleEditorSave = (value) => {
     setQuestionData((prev) => ({ ...prev, explanation: value }));
   };
 
-  // Handler to add a test case:
+  // --- Test Cases Handlers ---
+  const updateTestCase = (index, field, value) => {
+    const updatedTestCases = [...questionData.testCases];
+    updatedTestCases[index] = { ...updatedTestCases[index], [field]: value };
+    setQuestionData((prev) => ({ ...prev, testCases: updatedTestCases }));
+  };
+
+  const removeTestCase = (index) => {
+    const updatedTestCases = questionData.testCases.filter((_, i) => i !== index);
+    setQuestionData((prev) => ({ ...prev, testCases: updatedTestCases }));
+  };
+
+  // --- Similar Questions Handlers ---
+  const updateSimilarQuestion = (index, field, value) => {
+    const updatedSimilar = [...questionData.similarQuestions];
+    updatedSimilar[index] = { ...updatedSimilar[index], [field]: value };
+    setQuestionData((prev) => ({ ...prev, similarQuestions: updatedSimilar }));
+  };
+
+  const removeSimilarQuestion = (index) => {
+    const updatedSimilar = questionData.similarQuestions.filter((_, i) => i !== index);
+    setQuestionData((prev) => ({ ...prev, similarQuestions: updatedSimilar }));
+  };
+
   const addTestCase = () => {
     if (newTestCase.input.trim() && newTestCase.output.trim()) {
       setQuestionData((prev) => ({
@@ -64,7 +112,6 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
     }
   };
 
-  // Handler to add a similar question:
   const addSimilarQuestion = () => {
     if (newSimilar.title.trim() && newSimilar.url.trim()) {
       setQuestionData((prev) => ({
@@ -77,14 +124,17 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
     }
   };
 
-  // Internal submit handler
+  // Final submit handler: Trigger editor save first.
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Prepare FormData payload:
+    // Trigger the editor's save method to update explanation in state.
+    if (editorRef.current) {
+      editorRef.current.triggerSave();
+    }
+    // Prepare FormData payload.
     const formData = new FormData();
     formData.append('title', questionData.title);
     formData.append('explanation', questionData.explanation);
-    // Append test cases and similar questions as JSON strings:
     formData.append('testCases', JSON.stringify(questionData.testCases));
     formData.append('difficulty', questionData.difficulty);
     formData.append('tags', questionData.tags);
@@ -96,22 +146,14 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
     formData.append('similarQuestions', JSON.stringify(questionData.similarQuestions));
     formData.append('codingPlatformLink', questionData.codingPlatformLink);
 
-    // (Optional) Debug FormData entries:
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
-
     try {
-      // If external onSubmit prop is provided, use it (for edit)...
       if (externalOnSubmit) {
         await externalOnSubmit(questionData);
       } else {
-        // Otherwise, create a new question:
         await api.post('/assignments', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         toast.success('Item created successfully!');
-        // Reset state for a new question:
         setQuestionData({
           title: '',
           explanation: '',
@@ -151,38 +193,92 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
         {/* Content (Explanation) */}
         <div>
           <label className="block font-medium mb-1">Content:</label>
-          <BasicTextEditor onSave={handleEditorSave} initialContent={questionData.explanation} />
+          <BasicTextEditor 
+            ref={editorRef}
+            onSave={handleEditorSave} 
+            initialContent={questionData.explanation} 
+          />
         </div>
         {/* Test Cases Section */}
         <div>
           <label className="block font-medium mb-1">Test Cases:</label>
-          {questionData.testCases.map((tc, index) => (
-            <div key={index} className="border p-2 mb-2 rounded">
-              <p><strong>Input:</strong> {tc.input}</p>
-              <p><strong>Output:</strong> {tc.output}</p>
-              {tc.explanation && <p><strong>Explanation:</strong> {tc.explanation}</p>}
-            </div>
-          ))}
+          <div className="space-y-4">
+            {(Array.isArray(questionData.testCases) ? questionData.testCases : []).map((tc, index) => (
+              <div key={index} className="border rounded p-4 bg-gray-50 flex justify-between items-start">
+                <div className="flex-1">
+                  <div>
+                    <span className="font-bold block">Input:</span>
+                    {isEdit ? (
+                      <textarea
+                        value={tc.input}
+                        onChange={(e) => updateTestCase(index, 'input', e.target.value)}
+                        className="whitespace-pre-wrap text-sm border rounded p-1 w-full"
+                        rows={3}
+                      />
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm">{tc.input}</pre>
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-bold block">Output:</span>
+                    {isEdit ? (
+                      <textarea
+                        value={tc.output}
+                        onChange={(e) => updateTestCase(index, 'output', e.target.value)}
+                        className="whitespace-pre-wrap text-sm border rounded p-1 w-full"
+                        rows={3}
+                      />
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm">{tc.output}</pre>
+                    )}
+                  </div>
+                  <div className="mt-2 border-t pt-2">
+                    <span className="font-bold block">Explanation:</span>
+                    {isEdit ? (
+                      <textarea
+                        value={tc.explanation}
+                        onChange={(e) => updateTestCase(index, 'explanation', e.target.value)}
+                        className="whitespace-pre-wrap text-sm border rounded p-1 w-full"
+                        rows={2}
+                      />
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm">{tc.explanation}</pre>
+                    )}
+                  </div>
+                </div>
+                {isEdit && (
+                  <button 
+                    type="button" 
+                    onClick={() => removeTestCase(index)}
+                    className="bg-red-500 text-white px-2 py-1 rounded ml-2"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
           <div className="border p-2 rounded mb-2">
-            <input 
-              type="text"
+            <textarea
               placeholder="Test Case Input (supports multiline)"
               value={newTestCase.input}
               onChange={(e) => setNewTestCase({ ...newTestCase, input: e.target.value })}
               className="w-full border rounded p-2 mb-2"
-            />
-            <input 
-              type="text"
-              placeholder="Test Case Output"
+              rows={3}
+            ></textarea>
+            <textarea
+              placeholder="Test Case Output (supports multiline)"
               value={newTestCase.output}
               onChange={(e) => setNewTestCase({ ...newTestCase, output: e.target.value })}
               className="w-full border rounded p-2 mb-2"
-            />
+              rows={3}
+            ></textarea>
             <textarea 
               placeholder="Explanation (optional)"
               value={newTestCase.explanation}
               onChange={(e) => setNewTestCase({ ...newTestCase, explanation: e.target.value })}
               className="w-full border rounded p-2 mb-2"
+              rows={2}
             ></textarea>
             <button type="button" onClick={addTestCase} className="bg-green-500 text-white px-3 py-1 rounded">
               Add Test Case
@@ -258,12 +354,49 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
         {/* Similar Questions Section */}
         <div>
           <label className="block font-medium mb-1">Similar Questions:</label>
-          {questionData.similarQuestions.map((sq, index) => (
-            <div key={index} className="border p-2 mb-2 rounded">
-              <p><strong>Title:</strong> {sq.title}</p>
-              <p><strong>URL:</strong> {sq.url}</p>
-            </div>
-          ))}
+          <div className="space-y-4">
+            {(Array.isArray(questionData.similarQuestions) ? questionData.similarQuestions : []).map((sq, index) => (
+              <div key={index} className="border rounded p-4 bg-gray-50 flex justify-between items-start">
+                <div className="flex-1">
+                  <div>
+                    <span className="font-bold block">Title:</span>
+                    {isEdit ? (
+                      <input 
+                        type="text"
+                        value={sq.title}
+                        onChange={(e) => updateSimilarQuestion(index, 'title', e.target.value)}
+                        className="w-full border rounded p-1"
+                      />
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm">{sq.title}</pre>
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-bold block mt-1">URL:</span>
+                    {isEdit ? (
+                      <input 
+                        type="text"
+                        value={sq.url}
+                        onChange={(e) => updateSimilarQuestion(index, 'url', e.target.value)}
+                        className="w-full border rounded p-1"
+                      />
+                    ) : (
+                      <pre className="whitespace-pre-wrap text-sm">{sq.url}</pre>
+                    )}
+                  </div>
+                </div>
+                {isEdit && (
+                  <button 
+                    type="button" 
+                    onClick={() => removeSimilarQuestion(index)}
+                    className="bg-red-500 text-white px-2 py-1 rounded ml-2"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
           <div className="border p-2 rounded mb-2">
             <input 
               type="text"

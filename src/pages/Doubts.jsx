@@ -2,12 +2,33 @@
 import React, { useEffect, useState, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { HashLoader } from "react-spinners";
 import DoubtCard from '../components/DoubCard';
 import { toast } from 'react-toastify';
+
+const majorTopics = [
+  "All",
+  "Miscellaneous",
+  "Basics & Syntax",
+  "Data Types & Variables",
+  "Operators",
+  "Control Structures",
+  "Functions",
+  "Pointers & Memory Management",
+  "Arrays",
+  "String",
+  "Object-Oriented Programming (OOP)",
+  "Templates & Generic Programming",
+  "STL",
+  "Exception Handling",
+  "File I/O",
+  "Advanced Topics"
+];
 
 function Doubts() {
   const { auth } = useContext(AuthContext);
   const [doubts, setDoubts] = useState([]);
+  const[isDoubtLoaded,setIsDoubtLoaded]= useState(false)
   
   // Filter state variables
   const [assignmentTag, setAssignmentTag] = useState('');
@@ -16,6 +37,7 @@ function Doubts() {
   const [resolved, setResolved] = useState('');
   const [status, setStatus] = useState('');
   const [timeframe, setTimeframe] = useState(''); // "today", "yesterday", or empty
+  const [loading, setLoading] = useState(false);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -35,16 +57,21 @@ function Doubts() {
         page,
         limit
       };
+      setLoading(true);
       const res = await api.get('/doubts/filter-doubts', { params });
       setDoubts(res.data.doubts);
       setTotal(res.data.total);
+      console.log("Doubts length is: ", res.data.doubts.length)
+      setIsDoubtLoaded(true)
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.error(err);
       toast.error('Failed to fetch filtered doubts.');
     }
   };
 
-  // Always call fetchFilteredDoubts for all authenticated users
+  // Always call fetchFilteredDoubts for authenticated users
   useEffect(() => {
     if (!auth) return;
     fetchFilteredDoubts();
@@ -73,10 +100,10 @@ function Doubts() {
   }
 
   return (
-    <div className=" bg-color min-h-screen container mx-auto p-4 space-y-8">
+    <div className="bg-color min-h-screen container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-6">Doubts</h1>
       
-      {/* Filter Form for All Authenticated Users */}
+      {/* Filter Form */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">Filter Doubts</h2>
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -140,8 +167,8 @@ function Doubts() {
           </div>
         </form>
         
-        {/* Pagination Controls placed below the filter section */}
-        <div className="flex items-center justify-between mt-6">
+        {/* Pagination Controls */}
+        <div className="flex items-center flex-wrap justify-between mt-6">
           <button onClick={handlePrevPage} disabled={page === 1}
             className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 transition-colors">
             Previous
@@ -178,8 +205,12 @@ function Doubts() {
         </div>
       </div>
 
-      {/* Doubt Cards */}
-      {doubts.length === 0 ? (
+      {/* Loader / Doubt Cards */}
+      {(loading) ?  (
+        <div className="flex items-center justify-center h-32">
+          <HashLoader size={35} color="red" />
+        </div>
+      ) :isDoubtLoaded && doubts.length === 0 ? (
         <p className="text-gray-500">No doubts available.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
