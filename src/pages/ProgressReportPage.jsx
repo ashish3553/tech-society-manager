@@ -15,7 +15,7 @@ const getRatingClass = (rating) => {
 // Disclaimer component displayed at the top
 const Disclaimer = () => (
   <div className="mb-8 p-6 bg-gradient-to-r from-blue-100 to-blue-50 border-l-8 border-blue-700 rounded shadow-md">
-    <h2 className="text-xl font-bold mb-2 text-blue-800">Thisng you should keep in mind</h2>
+    <h2 className="text-xl font-bold mb-2 text-blue-800">Things you should keep in mind</h2>
     <p className="mb-2 text-md leading-relaxed text-gray-700">
       This is your progress report – a mirror that reflects your real self. It is designed to
       show you not only your achievements but also your faults, errors, patterns, and recurring mistakes.
