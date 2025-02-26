@@ -79,6 +79,11 @@ function Header() {
                   Solutions
                 </Link>
               </li>
+              <li>
+                <Link to="/progress" className="hover:underline">
+                  Progress
+                </Link>
+              </li>
                 <li>
                   <Link to="/doubts" className="hover:underline">Messages</Link>
                 </li>

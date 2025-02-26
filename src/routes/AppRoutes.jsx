@@ -24,6 +24,7 @@ import ForgotPassword from '../pages/ForgetPassword';
 import ResetPassword from '../pages/ResetPassword';
 import SolutionReview from '../pages/SolutionReview';
 import StudentSolutions from '../pages/StudentSolutionPage';
+import ProgressReportPage from '../pages/ProgressReportPage';
 
 function AppRoutes() {
   return (
@@ -40,6 +41,7 @@ function AppRoutes() {
 
 
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/progress" element={<ProgressReportPage />} />
       <Route path="/mentor" element={<MentorDashboard />} />
       <Route path="/assignments" element={<Assignments />} />
       <Route path="/resourse" element={<Resourse />} />

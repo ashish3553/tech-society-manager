@@ -1,8 +1,35 @@
 // src/components/AdminPanel.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import AdminUserCard from './AdminUserCard';
 
 function AdminPanel({ adminUsers, onDisable, onDelete }) {
+  // A state to hold progress data for mentors by their ID.
+  const [progressData, setProgressData] = useState({});
+
+  // Function to fetch progress for a specific user
+  const fetchProgress = async (userId) => {
+    try {
+      const res = await axios.get(`/api/goals/user/${userId}`);
+      // Save the fetched progress for that user
+      setProgressData((prev) => ({
+        ...prev,
+        [userId]: res.data,
+      }));
+    } catch (error) {
+      console.error('Error fetching progress for user', userId, error);
+    }
+  };
+
+  // Optionally, preload progress data for mentor users when the component mounts
+  useEffect(() => {
+    adminUsers.forEach((user) => {
+      if (user.role === 'mentor') {
+        fetchProgress(user._id);
+      }
+    });
+  }, [adminUsers]);
+
   return (
     <div className="bg-white rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Panel</h2>
@@ -25,6 +52,8 @@ function AdminPanel({ adminUsers, onDisable, onDelete }) {
             <AdminUserCard 
               key={user._id}
               user={user}
+              progress={progressData[user._id]}
+              fetchProgress={() => fetchProgress(user._id)}
               onDisable={onDisable}
               onDelete={onDelete}
             />
