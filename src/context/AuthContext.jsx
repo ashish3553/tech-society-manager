@@ -4,16 +4,11 @@ import React, { createContext, useState, useEffect } from 'react';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Use a function to initialize state so that it runs only once
   const [auth, setAuth] = useState(() => {
-    // Retrieve the token and user string from localStorage
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
-
-    // Initialize user as null
     let user = null;
 
-    // Check if userStr is present and is not the literal string "undefined"
     if (userStr && userStr !== "undefined") {
       try {
         user = JSON.parse(userStr);
@@ -23,11 +18,12 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    // If both token and user are available, return an object; otherwise, return null
     return token && user ? { token, user } : null;
   });
 
-  // Save auth state changes back to localStorage
+  // Determine admin status based on user role
+  const isAdmin = auth?.user?.role === 'admin';
+
   useEffect(() => {
     if (auth) {
       localStorage.setItem('token', auth.token);
@@ -39,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   }, [auth]);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, setAuth, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

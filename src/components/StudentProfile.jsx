@@ -66,15 +66,15 @@ function StudentProfile() {
   console.log("hii",user)
 
   return (
-    <div className="bg-white rounded shadow p-4 mb-6">
+    <div className=" rounded shadow p-4 mb-6">
       <div className="flex flex-col lg:flex-row items-center justify-between">
         {/* Left Section: User Details */}
         <div className="flex-1">
           <h2 className="text-xl font-bold mb-1">Welcome, {user.name}</h2>
-          <p className="text-gray-700"><strong>Email:</strong> {user.email}</p>
-          <p className="text-gray-700"><strong>Branch:</strong> {user.branch || 'N/A'}</p>
-          <p className="text-gray-700"><strong>Year:</strong> {user.year || 'N/A'}</p>
-          <p className="text-gray-700"><strong>Role:</strong> {user.role}</p>
+          <p className="text-gray-400"><strong>Email:</strong> {user.email}</p>
+          <p className="text-gray-400"><strong>Branch:</strong> {user.branch || 'N/A'}</p>
+          <p className="text-gray-400"><strong>Year:</strong> {user.year || 'N/A'}</p>
+          <p className="text-gray-400"><strong>Role:</strong> {user.role}</p>
         </div>
         {/* Right Section: Counters */}
         <div className="mt-4 lg:mt-0 flex flex-col sm:flex-row sm:space-x-4">

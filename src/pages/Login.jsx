@@ -13,8 +13,8 @@ function Login() {
   const [password, setPassword] = useState('');
   const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [loading,setLoading]=useState(false)
-  
+  const [loading, setLoading] = useState(false)
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ function Login() {
       setAuth({ token: res.data.token, user: res.data.user });
       const role = res.data.user.role
       setLoading(false)
-      navigate(role==="student"?'/dashboard':'/mentor'); // Redirect to dashboard after successful login
+      navigate(role === "student" ? '/dashboard' : '/mentor'); // Redirect to dashboard after successful login
     } catch (err) {
       setLoading(false)
       console.error(err);
@@ -35,36 +35,38 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 to-blue-500">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-md  rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700">Email:</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              placeholder="xyz@gmail.com"
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>
             <label className="block text-gray-700">Password:</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              placeholder='hgfhgf@f74'
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
-       {loading ?    <HashLoader className="text-center" size={35} color="white" />:"Login"}
-            
-            
+            {loading ? <HashLoader className="text-center" size={35} color="white" /> : "Login"}
+
+
           </button>
         </form>
         <div className="mt-4 flex flex-col items-center">

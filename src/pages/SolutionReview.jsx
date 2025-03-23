@@ -77,7 +77,7 @@ function SolutionReview() {
       <h1 className="text-3xl font-bold mb-4 text-center">Solution Reviews</h1>
       
       {/* Filter Form */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className=" p-4 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">Filter Reviews</h2>
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
@@ -160,7 +160,7 @@ function SolutionReview() {
             {reviews.map((review) => (
               <div 
                 key={`${review.assignmentId}-${review.student._id}`} 
-                className="bg-white p-4 rounded shadow relative cursor-pointer hover:shadow-lg transition-shadow"
+                className=" p-4 rounded shadow relative cursor-pointer hover:shadow-lg transition-shadow"
                 onClick={() => handleCardClick(review)}
               >
                 <h2 className="text-xl font-bold mb-2">{review.assignmentTitle}</h2>

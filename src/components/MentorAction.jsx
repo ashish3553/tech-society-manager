@@ -7,7 +7,7 @@ const MentorActions = ({ displayDate, setIsEditingAssignment, showPersonalInput,
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className="border-4 bg-slate-400 border-black rounded shadow p-6">
       {/* First Row: Edit and Assign Personally */}
       <div className="flex justify-between items-center mb-2">
         <button 

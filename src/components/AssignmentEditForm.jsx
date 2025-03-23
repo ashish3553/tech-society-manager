@@ -3,7 +3,7 @@ import React from 'react';
 
 const AssignmentEditForm = ({ editData, setEditData, onSubmit, onCancel }) => {
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-4 bg-dark">
       <div>
         <label className="block font-medium mb-1">Title:</label>
         <input

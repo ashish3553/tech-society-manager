@@ -74,7 +74,7 @@ const MentorSolutionSection = ({ assignment }) => {
   }
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h3 className="text-2xl font-bold mb-4">Solution</h3>
 
       {/* Wrap the solution content in a container with the shared class */}

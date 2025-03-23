@@ -13,10 +13,11 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <div className="flex flex-col min-h-screen">
-          <Header />
+        <Header />
           <main className="flex-grow">
             <AppRoutes />
           </main>
+
           <Footer />
           {/* Toast Container */}
           <ToastContainer position="top-right" autoClose={3000} hideProgressBar />

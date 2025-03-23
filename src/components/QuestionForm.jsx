@@ -174,7 +174,7 @@ function QuestionForm({ isEdit = false, initialData, onCancel, onSubmit: externa
   };
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">
         {isEdit ? 'Edit Question' : `Create ${questionData.repoCategory === 'question' ? 'Question' : 'Project'}`}
       </h2>

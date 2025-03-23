@@ -153,7 +153,7 @@ const StudentResponseForm = ({
 
       {showEditorModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
-          <div className="bg-white rounded p-4 w-11/12 md:w-4/5 h-4/5 overflow-auto">
+          <div className=" bg-gray-400 rounded p-4 w-11/12 md:w-4/5 h-4/5 overflow-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Submit Your Code</h2>
               <button 

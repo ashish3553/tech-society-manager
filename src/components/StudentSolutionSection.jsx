@@ -49,7 +49,7 @@ const StudentSolutionSection = ({ assignmentId }) => {
   if (!solution.published) return <div>Solution is hidden by the admin.</div>;
 
   return (
-    <div className="bg-white rounded shadow p-6 mt-4">
+    <div className=" rounded shadow p-6 mt-4">
       <div className=" flex space-x-4 justify-between">
       <h3 className="text-2xl font-bold mb-4">Solution (Read-Only)</h3>
 
@@ -84,7 +84,7 @@ const StudentSolutionSection = ({ assignmentId }) => {
       )} */}
       {showFeedbackModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded p-6 w-96">
+          <div className=" rounded p-6 w-96">
             <h2 className="text-xl font-bold mb-4">Provide Feedback</h2>
             <form onSubmit={handleFeedbackSubmit}>
               <textarea

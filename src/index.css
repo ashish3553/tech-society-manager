@@ -2,30 +2,176 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-dark text-dark-text-primary;
+}
 
 /* Custom thin scrollbar styling */
 .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #2563eb #e5e7eb; /* blue-600 and gray-200 */
-  }
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.invertase.purple') theme('colors.dark.lighter');
+}
+
+/* For WebKit-based browsers */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  @apply bg-dark-lighter;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-invertase-purple rounded-full border border-transparent;
+}
+
+.bg-color {
+  @apply bg-dark;
+}
+
+/* Home page specific styles */
+.home-section {
+  /* @apply bg-dark-card rounded-xl border border-dark-border p-6;
   
-  /* For WebKit-based browsers */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: #e5e7eb;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #2563eb;
-    border-radius: 3px;
-    border: 1px solid transparent;
-  }
+  @apply transition-all duration-300 ease-in-out; */
+  margin-inline-start: 20px;
+  padding-bottom: 20px;
+}
 
-  .bg-color{
-   background-color :#d2c49f4a;
+/* .home-section:hover {
+  @apply transform -translate-y-1 shadow-xl;
+  @apply border-invertase-purple/30;
+} */
+
+/* .announcement-section {
+  @apply bg-dark-card rounded-xl p-6 mb-8;
+  @apply border border-dark-border;
+  @apply relative overflow-hidden;
+} */
+
+/* .announcement-section::before {
+  content: '';
+  @apply absolute inset-0 bg-invertase-gradient opacity-10 z-0;
+} */
+
+/* .briefing-section {
+  @apply bg-dark-card rounded-xl p-6 mb-8;
+  @apply border border-dark-border;
+  @apply relative overflow-hidden;
+}
+
+/* .briefing-section::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-invertase-blue/20 to-invertase-green/20 opacity-30 z-0;
+} */ 
+
+/* .assignment-section {
+  @apply bg-dark-card rounded-xl p-6 mb-8;
+  @apply border border-dark-border;
+  @apply relative overflow-hidden;
+}
+
+.assignment-section::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-invertase-green/20 to-invertase-yellow/20 opacity-30 z-0;
+} */
+
+/* .messages-section {
+  @apply bg-dark-card rounded-xl p-6 mb-8;
+  @apply border border-dark-border;
+  @apply relative overflow-hidden;
+}
+
+.messages-section::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-invertase-purple/20 to-invertase-blue/20 opacity-30 z-0;
+} */
+
+.section-title {
+  @apply text-dark-text-primary text-3xl font-bold mb-6 text-center;
+  @apply relative z-10;
+}
+
+.welcome-title {
+  @apply text-xl font-semibold text-center mb-8 py-4;
+  @apply bg-invertase-gradient bg-clip-text text-transparent;
+  @apply relative z-10;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
- 
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
 
-  
+.duration-3000 {
+  transition-duration: 3000ms;
+}
+
+/* Header Navigation Styles */
+.nav-link {
+  @apply relative py-2 text-white/90 transition-all duration-300 hover:text-white;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.nav-link::after {
+  content: '';
+  @apply absolute left-1/2 -translate-x-1/2 bottom-0 w-0 h-0.5 bg-white rounded-full transition-all duration-300 ease-out;
+}
+
+.nav-link:hover::after,
+.nav-link.active-nav-link::after {
+  @apply w-full;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.nav-link:hover {
+  transform: translateY(-1px);
+}
+
+.active-nav-link {
+  @apply font-semibold text-white;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* Mobile menu animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+nav.sm\:hidden {
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header Button Styles */
+.header-button {
+  @apply px-6 py-2 rounded-lg font-medium transition-all duration-300;
+  @apply bg-white/10 hover:bg-white/20 backdrop-blur-sm;
+  @apply shadow-lg hover:shadow-xl;
+  @apply transform hover:-translate-y-0.5;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Header Glassmorphism Effect */
+.header-glass {
+  @apply backdrop-blur-md bg-opacity-70;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}

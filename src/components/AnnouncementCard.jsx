@@ -1,7 +1,7 @@
 // src/components/AnnouncementCard.jsx
 import React, { useState } from 'react';
 
-function AnnouncementCard({ announcement, onEdit, onDelete, isEditable=false }) {
+function AnnouncementCard({ announcement, onEdit, onDelete, isEditable = false }) {
   const displayDate = new Date(announcement.createdAt).toLocaleString('en-IN');
   const [showModal, setShowModal] = useState(false);
   // Local state for edited fields
@@ -39,24 +39,27 @@ function AnnouncementCard({ announcement, onEdit, onDelete, isEditable=false }) 
 
   return (
     <>
-      <div className="w-full p-4 bg-white border border-yellow-400 rounded-lg shadow hover:shadow-xl transition transform hover:-translate-y-1">
-        <p className="text-gray-900 text-xl font-semibold mb-2">
+      <div className="w-full p-6 bg-white border border-yellow-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+        <p className="text-gray-800 text-2xl font-bold mb-3">
           {announcement.subject}
         </p>
-        <p className="text-gray-700 mb-2">{announcement.body}</p>
+        <p className="text-gray-600 text-base mb-4 leading-relaxed">{announcement.body}</p>
         {announcement.links && announcement.links.length > 0 && (
-  <p>
-    Link:{" "}
-    <a 
-      href={announcement.links[0]} 
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="text-blue-500 hover:underline"
-    >
-      Click here
-    </a>
-  </p>
-)}
+          <p className="mb-4">
+            <span className="font-medium text-gray-700 mr-2">Link:</span>
+            <a
+              href={announcement.links[0]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 font-medium hover:underline inline-flex items-center"
+            >
+              Click here
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </p>
+        )}
         <div className="flex justify-between items-center space-x-2">
           <div className="flex space-x-2">
             {isEditable && (

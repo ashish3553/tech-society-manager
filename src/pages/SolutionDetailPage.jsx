@@ -88,7 +88,7 @@ const SolutionDetailPage = () => {
       {/* Feedback Modal */}
       {showFeedbackModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded p-6 w-96">
+          <div className=" rounded p-6 w-96">
             <h2 className="text-xl font-bold mb-4">Are you sure you want to view the solution?</h2>
             <p className="mb-4">This will mark that you are giving up on solving it, and you can then provide feedback.</p>
             <form onSubmit={handleFeedbackSubmit}>

@@ -48,7 +48,7 @@ function DoubtList() {
         <p className="text-gray-500">No doubts available.</p>
       ) : (
         doubts.map((doubt) => (
-          <div key={doubt._id} className="bg-white rounded shadow p-4">
+          <div key={doubt._id} className=" rounded shadow p-4">
             <p className="mb-2">
               <strong>Assignment:</strong> {doubt.assignment?.title || 'N/A'}
             </p>

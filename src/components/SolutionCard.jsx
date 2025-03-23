@@ -3,7 +3,7 @@ import React from "react";
 
 const SolutionCard = ({ solution, onEdit }) => {
   return (
-    <div className="bg-white border rounded-lg shadow p-6 my-4">
+    <div className=" border rounded-lg shadow p-6 my-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Solution</h2>
         {onEdit && (

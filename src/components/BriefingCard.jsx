@@ -46,7 +46,7 @@ const BriefingCard = ({ briefing, onEdit, onDelete }) => {
     <div className="bg-white p-6 rounded shadow flex flex-col relative min-h-[250px]">
       {/* Main Content Area */}
       <div className="flex-grow">
-        <h3 className="text-xl font-bold mb-2">Class Briefing</h3>
+        <h3 className="text-xl font-bold mb-2 text-black">Class Briefing</h3>
         <div className="mb-2">
           <p className="font-semibold text-gray-700">Summary:</p>
           <p className="whitespace-pre-line text-gray-800">{briefing.classSummary}</p>

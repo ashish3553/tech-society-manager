@@ -77,7 +77,8 @@ function Registration() {
               value={name} 
               onChange={(e) => setName(e.target.value)} 
               required 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder='xyzd'
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>
@@ -87,7 +88,8 @@ function Registration() {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder='xyz@gmail.com'
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>
@@ -97,7 +99,8 @@ function Registration() {
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
               required 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder='jdfhjg@b43n'
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>
@@ -106,7 +109,8 @@ function Registration() {
               type="text" 
               value={branch} 
               onChange={(e) => setBranch(e.target.value)} 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder='CSE'
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>
@@ -114,8 +118,9 @@ function Registration() {
             <input 
               type="number" 
               value={year} 
-              onChange={(e) => setYear(e.target.value)} 
-              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onChange={(e) => setYear(e.target.value)}
+              placeholder='2024' 
+              className="w-full bg-white text-black px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 placeholder-opacity-50"
             />
           </div>
           <div>

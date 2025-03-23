@@ -27,7 +27,7 @@ function MentorProfile() {
   }, [auth]);
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-6">
+    <div className="p-4 rounded shadow mb-6">
       <h2 className="text-xl font-bold mb-2">Mentor Profile</h2>
       <p><strong>Name:</strong> {auth.user.name}</p>
       <p><strong>Email:</strong> {auth.user.email}</p>

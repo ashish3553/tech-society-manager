@@ -80,7 +80,7 @@ function BriefingPanel() {
   const role = auth?.user?.role;
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">Daily Briefing</h2>
 
       {isEditing ? (

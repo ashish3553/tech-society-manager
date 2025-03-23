@@ -79,7 +79,7 @@ function Dashboard() {
   }
 
   return (
-    <div className=" bg-color min-h-screen container mx-auto p-4 space-y-8">
+    <div className="min-h-screen mx-auto p-8 space-y-8 ">
       <StudentProfile />
 
       {/* Toggle Buttons */}
@@ -196,7 +196,7 @@ function Dashboard() {
       {/* Render Personal Assignments Section */}
       {activeSection === 'personal' && (
         <div className="mb-6">
-          <div className="bg-white p-4 rounded shadow mb-6">
+          <div className=" p-4 rounded shadow mb-6">
             <h3 className="text-xl font-bold mb-4">Filter Personal Assignments by Mentor</h3>
             <input
               type="text"

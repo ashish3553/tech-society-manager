@@ -44,7 +44,7 @@ function MessageForm() {
   };
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">Create Message</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

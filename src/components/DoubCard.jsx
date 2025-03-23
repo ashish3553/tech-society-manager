@@ -68,7 +68,7 @@ if (doubt.conversation && doubt.conversation.length > 0) {
     doubt.currentStatus || (doubt.resolved ? 'resolved' : 'unresolved');
 
   return (
-    <div className="relative bg-white rounded shadow p-4 hover:shadow-lg transition-shadow duration-200 flex flex-col">
+    <div className="relative  rounded shadow p-4 hover:shadow-lg transition-shadow duration-200 flex flex-col">
       {/* Top Section: Assignment Title and Category Badge */}
       <div className="mb-2">
         <h3 className="text-lg font-semibold">

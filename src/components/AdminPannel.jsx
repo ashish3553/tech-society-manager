@@ -31,7 +31,7 @@ function AdminPanel({ adminUsers, onDisable, onDelete }) {
   }, [adminUsers]);
 
   return (
-    <div className="bg-white rounded shadow p-6">
+    <div className=" rounded shadow p-6">
       <h2 className="text-2xl font-bold mb-4">Admin Panel</h2>
       <div className="flex gap-4 mb-4">
         <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors text-sm">
