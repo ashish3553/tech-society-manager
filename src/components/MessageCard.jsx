@@ -4,10 +4,16 @@ import { Link } from 'react-router-dom';
 
 function MessageCard({ message,isHome }) {
   return (
-    <div className="relative bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 p-6 flex flex-col">
+    <div className="relative border bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border-zinc-700 
+      shadow-lg hover:shadow-2xl hover:shadow-indigo-500/10 
+      hover:border-indigo-500/30 hover:scale-[1.02] 
+      hover:-translate-y-1 
+      transition-all duration-300 ease-out 
+      rounded-lg p-6 flex flex-col
+      hover:bg-gradient-to-br hover:from-zinc-800 hover:via-zinc-900 hover:to-zinc-800">
       {/* Tag Badge */}
       {!isHome && <div className="absolute top-3 right-3">
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${message.isPublic ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>
+        <span className={`px-2 py-1 text-xs  font-semibold rounded-full ${message.isPublic ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>
           {message.isPublic ? 'Public' : 'Personal'}
         </span>
       </div>}
@@ -18,7 +24,7 @@ function MessageCard({ message,isHome }) {
       </h3>
 
       {/* Message Body */}
-      <p className="text-base text-gray-800 mb-4 line-clamp-3">
+      <p className="text-base text-gray-300 mb-4 line-clamp-3">
         {message.body}
       </p>
 

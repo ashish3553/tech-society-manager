@@ -141,8 +141,15 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
     setPendingTag('');
   };
 
+
   return (
-    <div className="relative border border-gray-200 rounded-lg shadow-lg transition-shadow duration-300 p-6 flex flex-col">
+    <div className="relative border bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border-zinc-700 
+      shadow-lg hover:shadow-2xl hover:shadow-indigo-500/10 
+      hover:border-indigo-500/30 hover:scale-[1.02] 
+      hover:-translate-y-1 
+      transition-all duration-300 ease-out 
+      rounded-lg p-6 flex flex-col
+      hover:bg-gradient-to-br hover:from-zinc-800 hover:via-zinc-900 hover:to-zinc-800">
       {/* Main Content */}
       <div className="space-y-3">
         <h2 className="text-2xl font-bold ">{assignment.title}</h2>
