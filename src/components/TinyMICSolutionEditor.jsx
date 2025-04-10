@@ -57,7 +57,7 @@ const TinyMICSolutionEditor = ({ initialData, onChange }) => {
       </h1>
 
       <Editor
-        apiKey="307sqexhko71hec8q0oxhhiq95ylmesqvzpehrnrxvkfkyod"
+        apiKey={ import.meta.env.VITE_TINY_EDITOR_API_KEY }
         onEditorChange={(newContent, editor) => {
           onChange(newContent);
         }}
