@@ -14,15 +14,15 @@ function SolutionReview() {
   const [reviewStatus, setReviewStatus] = useState('');
   const [studentName, setStudentName] = useState('');
   const [assignmentTitle, setAssignmentTitle] = useState('');
-  
+
   // Pagination states
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [total, setTotal] = useState(0);
-  
+
   const [selectedReview, setSelectedReview] = useState(null);
   const [assignmentDetail, setAssignmentDetail] = useState(null);
-  
+
   // Fetch reviews from backend
   const fetchReviews = async () => {
     try {
@@ -75,7 +75,7 @@ function SolutionReview() {
   return (
     <div className="container mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-4 text-center">Solution Reviews</h1>
-      
+
       {/* Filter Form */}
       <div className=" p-4 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">Filter Reviews</h2>
@@ -121,15 +121,15 @@ function SolutionReview() {
 
       {/* Pagination Controls */}
       <div className="flex items-center justify-between mb-4">
-        <button 
-          onClick={() => setPage(page > 1 ? page - 1 : 1)} 
+        <button
+          onClick={() => setPage(page > 1 ? page - 1 : 1)}
           disabled={page === 1}
           className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 transition-colors"
         >
           Previous
         </button>
         <div>
-          Page: 
+          Page:
           <input
             type="number"
             value={page}
@@ -139,8 +139,8 @@ function SolutionReview() {
           />
           <span>Total Pages: {Math.ceil(total / limit)}</span>
         </div>
-        <button 
-          onClick={() => setPage(page * limit < total ? page + 1 : page)} 
+        <button
+          onClick={() => setPage(page * limit < total ? page + 1 : page)}
           disabled={page * limit >= total}
           className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 transition-colors"
         >
@@ -158,13 +158,13 @@ function SolutionReview() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (
-              <div 
-                key={`${review.assignmentId}-${review.student._id}`} 
-                className=" p-4 rounded shadow relative cursor-pointer hover:shadow-lg transition-shadow"
+              <div
+                key={`${review.assignmentId}-${review.student._id}`}
+                className="p-4 rounded-xl shadow relative cursor-pointer transition-all duration-300 ease-in-out border-2 border-gray-300 hover:-translate-y-1 hover:shadow-lg"
                 onClick={() => handleCardClick(review)}
               >
                 <h2 className="text-xl font-bold mb-2">{review.assignmentTitle}</h2>
-                <p className="text-sm text-gray-700">Submitted by: {review.student.name}</p>
+                <p className="text-sm text-gray-500">Submitted by: {review.student.name}</p>
                 <p > <span className="text-sm absolute  top-0 right-2 font-semibold text-white bg-slate-800 px-2 py-1 rounded-md" >{review.mentorReview?.status || 'pending'}</span></p>
                 {/* <p className="mt-2 text-gray-600 line-clamp-3">
                   {review.studentSolution 
@@ -179,7 +179,7 @@ function SolutionReview() {
         )
       ) : (
         <div>
-          <button 
+          <button
             onClick={() => {
               setSelectedReview(null);
               setAssignmentDetail(null);
@@ -190,11 +190,11 @@ function SolutionReview() {
           </button>
           {assignmentDetail ? (
             <>
-                  <div className=' font-bold text-center text-orange-500 text-4xl mb-4'>Assignment Details</div>
+              <div className=' font-bold text-center text-orange-500 text-4xl mb-4'>Assignment Details</div>
 
               <AssignmentDisplay assignment={assignmentDetail} />
               <div className="my-4">
-                <MentorSolutionReview 
+                <MentorSolutionReview
                   assignmentId={assignmentDetail._id}
                   studentResponse={selectedReview}
                   onReviewUpdated={(updatedData) => {

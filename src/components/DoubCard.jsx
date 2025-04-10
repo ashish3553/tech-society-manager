@@ -68,7 +68,7 @@ if (doubt.conversation && doubt.conversation.length > 0) {
     doubt.currentStatus || (doubt.resolved ? 'resolved' : 'unresolved');
 
   return (
-    <div className="relative  rounded shadow p-4 hover:shadow-lg transition-shadow duration-200 flex flex-col">
+    <div className="relative rounded border-2 border-gray-300  shadow p-4 hover:shadow-lg transition-shadow duration-200 flex flex-col">
       {/* Top Section: Assignment Title and Category Badge */}
       <div className="mb-2">
         <h3 className="text-lg font-semibold">
@@ -81,11 +81,11 @@ if (doubt.conversation && doubt.conversation.length > 0) {
 
       {/* Student Info */}
     
-          <p className="text-sm text-gray-700 mb-2">
+          <p className="text-sm text-gray-500 mb-2">
             <strong>Raised By:</strong> {studentName} ({studentBranch})
           </p>
           {lastReply && lastReply.sender && (
-            <p className="text-sm text-gray-700 mb-2">
+            <p className="text-sm text-gray-500 mb-2">
               <strong>Replied by:</strong> {lastReply.sender.name} ({lastReply.sender.role})
             </p>
           )}
@@ -100,7 +100,7 @@ if (doubt.conversation && doubt.conversation.length > 0) {
         <Link to={`/doubts/${doubt._id}`} className="text-indigo-600 font-semibold hover:underline">
           View Details
         </Link>
-        <span className={`text-white text-xs px-2 py-1 rounded ${getStatusBadgeColor(currentStatus)}`}>
+        <span className={`text-white text-xs px-2 py-1 absolute right-0 top-0 rounded ${getStatusBadgeColor(currentStatus)}`}>
           {currentStatus.toUpperCase()}
         </span>
         <span className="text-green-600 text-xs">

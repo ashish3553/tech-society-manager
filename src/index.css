@@ -33,61 +33,9 @@ body {
 
 /* Home page specific styles */
 .home-section {
-  /* @apply bg-dark-card rounded-xl border border-dark-border p-6;
-  
-  @apply transition-all duration-300 ease-in-out; */
   margin-inline-start: 20px;
   padding-bottom: 20px;
 }
-
-/* .home-section:hover {
-  @apply transform -translate-y-1 shadow-xl;
-  @apply border-invertase-purple/30;
-} */
-
-/* .announcement-section {
-  @apply bg-dark-card rounded-xl p-6 mb-8;
-  @apply border border-dark-border;
-  @apply relative overflow-hidden;
-} */
-
-/* .announcement-section::before {
-  content: '';
-  @apply absolute inset-0 bg-invertase-gradient opacity-10 z-0;
-} */
-
-/* .briefing-section {
-  @apply bg-dark-card rounded-xl p-6 mb-8;
-  @apply border border-dark-border;
-  @apply relative overflow-hidden;
-}
-
-/* .briefing-section::before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-invertase-blue/20 to-invertase-green/20 opacity-30 z-0;
-} */ 
-
-/* .assignment-section {
-  @apply bg-dark-card rounded-xl p-6 mb-8;
-  @apply border border-dark-border;
-  @apply relative overflow-hidden;
-}
-
-.assignment-section::before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-invertase-green/20 to-invertase-yellow/20 opacity-30 z-0;
-} */
-
-/* .messages-section {
-  @apply bg-dark-card rounded-xl p-6 mb-8;
-  @apply border border-dark-border;
-  @apply relative overflow-hidden;
-}
-
-.messages-section::before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-invertase-purple/20 to-invertase-blue/20 opacity-30 z-0;
-} */
 
 .section-title {
   @apply text-dark-text-primary text-3xl font-bold mb-6 text-center;
@@ -111,8 +59,26 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .animate-fade-in {
   animation: fade-in 1s ease-out;
+}
+
+.animate-float {
+  animation: float 10s ease-in-out infinite;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
 }
 
 .duration-3000 {
@@ -161,17 +127,79 @@ nav.sm\:hidden {
   animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header Button Styles */
-.header-button {
-  @apply px-6 py-2 rounded-lg font-medium transition-all duration-300;
-  @apply bg-white/10 hover:bg-white/20 backdrop-blur-sm;
-  @apply shadow-lg hover:shadow-xl;
-  @apply transform hover:-translate-y-0.5;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+/* Login page specific animations */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-/* Header Glassmorphism Effect */
-.header-glass {
-  @apply backdrop-blur-md bg-opacity-70;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+.gradient-animate {
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+/* Glass effect utilities */
+.glass-effect {
+  @apply backdrop-blur-lg bg-white/10 border border-white/20;
+}
+
+/* Login page specific styles */
+.login-page {
+  background-color: #0f172a;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Canvas container styles */
+canvas {
+  touch-action: none;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ensure proper stacking context */
+.z-10 {
+  z-index: 10;
+}
+
+/* Terminal-specific styles */
+.terminal-view {
+  @apply font-mono text-sm leading-normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.terminal-text {
+  @apply text-green-400;
+  color-adjust: exact;
+  print-color-adjust: exact;
+  forced-color-adjust: none;
+}
+
+/* Ensure terminal text is always visible */
+@media screen and (forced-colors: active) {
+  .terminal-text {
+    forced-color-adjust: auto;
+  }
+}
+
+/* Terminal selection color */
+.terminal-view::selection {
+  @apply bg-white/20 text-white;
+}
+
+/* Logo specific gradient */
+.logo-gradient {
+  background: linear-gradient(135deg, #60a5fa, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

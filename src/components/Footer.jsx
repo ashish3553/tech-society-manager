@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
-    <footer className="bg-dark border-t border-dark-border">
-      <div className="container mx-auto px-6 py-16">
+    <footer className="bg-dark border-t border-dark-border mt-10 mr-10 ml-10">
+      <div className="container mx-auto px-6 pt-10 pb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand Section */}
           <div className="space-y-5">

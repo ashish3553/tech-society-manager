@@ -27,7 +27,7 @@ function Home() {
   const [announcements, setAnnouncements] = useState([]);
   const [homeworkAssignments, setHomeworkAssignments] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1);
   const briefingsPerPage = 8;
@@ -100,7 +100,7 @@ function Home() {
       try {
         setLoading(true)
         const res = await api.get('/assignments/home');
-      
+
         setHomeworkAssignments(res.data);
       } catch (err) {
         setLoading(false)
@@ -112,7 +112,7 @@ function Home() {
   }, []);
 
   // Fetch Announcements (max 2)
-   useEffect(() => {
+  useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
         setLoading(true)
@@ -152,7 +152,7 @@ function Home() {
   const handleDeleteBriefing = async (briefingId) => {
     try {
       await api.delete(`/dailyBriefing/${briefingId}`);
-      setRefresh(prev => !prev); 
+      setRefresh(prev => !prev);
       toast.success('Briefing deleted successfully!');
       fetchBriefings();
     } catch (error) {
@@ -225,7 +225,7 @@ function Home() {
         <AnimatePresence>
           <section className="relative overflow-hidden bg-gradient-to-b from-dark via-dark-lighter to-dark pt-10 flex items-center">
             {/* Decorative elements */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
@@ -237,7 +237,7 @@ function Home() {
 
             <div className="mx-auto px-6 relative z-10">
               <div className="max-w-4xl text-center">
-                <motion.h1 
+                <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
@@ -246,13 +246,13 @@ function Home() {
                   Welcome to the Future of Coding Education Code India
                 </motion.h1>
 
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                   className="text-lg md:text-xl text-dark-text-secondary mb-8 max-w-2xl mx-auto"
                 >
-                  Join our community of passionate learners and expert mentors. 
+                  Join our community of passionate learners and expert mentors.
                   Master coding through hands-on practice and real-world projects.
                 </motion.p>
 
@@ -296,17 +296,23 @@ function Home() {
           </section>
         </AnimatePresence>
 
-        <h1 className="welcome-title ">
-          <HeroSectionCard/>
+        <h1 className="welcome-title">
+        <motion.div
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}  
+  transition={{ duration: 0.8, delay: 0.5 }}
+>
+  <HeroSectionCard announcementsCount={announcements.length} />
+</motion.div>
         </h1>
         {/* <HeroSectionCard/> */}
-        
+
         {/* Announcements Section */}
         <section id="announcements-section" className="announcement-section hidden">
           <h2 className="section-title">Recent Announcements</h2>
           {loading && <HashLoader className="mx-auto" size={35} color="red" />}
           {!loading && announcements.length > 0 && (
-            <div className="overflow-x-auto mx-6 pb-10">
+            <div className="overflow-x-auto mx- mb-4">
               <table className="min-w-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border-zinc-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg overflow-hidden">
                 <thead className="bg-gray-800">
                   <tr>
@@ -336,7 +342,7 @@ function Home() {
             </div>
           )}
         </section>
-        
+
         {/* Recent Class Briefings Section */}
         <section id="briefings-section" className="briefing-section hidden">
           <h2 className="section-title">Recent Class Briefings</h2>
@@ -359,15 +365,14 @@ function Home() {
                     ))}
                   </div>
                   {/* Pagination Controls */}
-                  <div className="flex justify-center items-center gap-4 mt-6 mb-8">
+                  {/* <div className="flex justify-center items-center gap-4 mt-6 mb-8">
                     <button
                       onClick={handlePrevPage}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded ${
-                        currentPage === 1
+                      className={`px-4 py-2 rounded ${currentPage === 1
                           ? 'bg-gray-600 cursor-not-allowed'
                           : 'bg-invertase-blue hover:bg-blue-600'
-                      } text-white transition-colors`}
+                        } text-white transition-colors`}
                     >
                       Previous
                     </button>
@@ -377,15 +382,14 @@ function Home() {
                     <button
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded ${
-                        currentPage === totalPages
+                      className={`px-4 py-2 rounded ${currentPage === totalPages
                           ? 'bg-gray-600 cursor-not-allowed'
                           : 'bg-invertase-blue hover:bg-blue-600'
-                      } text-white transition-colors`}
+                        } text-white transition-colors`}
                     >
                       Next
                     </button>
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
@@ -423,7 +427,7 @@ function Home() {
             )}
           </div>
         </section>
-      </div>  
+      </div>
     </>
   );
 }

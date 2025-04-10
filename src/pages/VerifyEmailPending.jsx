@@ -27,17 +27,17 @@ const VerifyEmailPending = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="w-full max-w-md rounded-lg shadow-lg p-8 text-center">
         <h2 className="text-2xl font-bold mb-4">Verify Your Email</h2>
         <p className="mb-4">
           Registration successful! Please check your email for a verification link.
           Once you verify your email, you can log in and access your dashboard.
         </p>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           If you don't see the email, please check your spam folder.
         </p>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">
+          <label className="block text-gray-500 mb-1">
             Enter your email to resend verification:
           </label>
           <input

@@ -53,7 +53,7 @@ function ContactForm() {
           />
           <textarea
             placeholder="Your Message"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded h-32"
             value={contactData.message}
             onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
             required
