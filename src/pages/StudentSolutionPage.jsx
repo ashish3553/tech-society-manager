@@ -87,7 +87,7 @@ function StudentSolutions() {
       <h1 className="text-3xl font-bold mb-4 text-center">My Submitted Solutions</h1>
       
       {/* Filter Form */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className=" p-4 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">Filter My Solutions</h2>
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
@@ -164,7 +164,7 @@ function StudentSolutions() {
             {assignments.map((assignment) => (
               <div 
                 key={assignment._id}
-                className="bg-white p-4 rounded shadow cursor-pointer hover:shadow-lg transition-shadow relative"
+                className=" p-4 rounded shadow cursor-pointer hover:shadow-lg transition-shadow relative"
                 onClick={() => handleCardClick(assignment)}
               >
                 <h2 className="text-xl font-bold mb-2">{assignment.title}</h2>
@@ -203,7 +203,7 @@ function StudentSolutions() {
     return respStudentId === String(auth.user.id);
   });
   return (
-    <div className="mt-6 bg-white p-4 rounded shadow">
+    <div className="mt-6  p-4 rounded shadow">
       <h2 className="text-xl font-bold mb-2">My Response</h2>
       <div className="mb-2">
         <strong>Solution:</strong>

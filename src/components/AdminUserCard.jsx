@@ -14,20 +14,14 @@ function AdminUserCard({ user, progress, fetchProgress, onDisable, onDelete }) {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-300">
+    <div className="border-pink-200 border-2 p-4 rounded shadow hover:shadow-lg transition-shadow duration-300">
       {/* User Basic Info */}
       <div className="flex items-center space-x-4">
-        {user.profileImage ? (
-          <img
-            src={user.profileImage}
-            alt="Profile"
-            className="w-16 h-16 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-            <span className="text-xs text-gray-500">No Img</span>
-          </div>
-        )}
+        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center animate-pulse">
+          <span className="text-2xl font-bold text-white">
+            {user.name.charAt(0).toUpperCase()}
+          </span>
+        </div>
         <div>
           <h3 className="text-xl font-bold text-indigo-700">{user.name}</h3>
           <p className="text-sm text-gray-600">{user.email}</p>

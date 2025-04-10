@@ -87,7 +87,7 @@ function DoubtDetail() {
   return (
     <div className="container mx-auto p-4 space-y-8">
       {/* Doubt Details Section */}
-      <div className="bg-white rounded shadow p-6">
+      <div className=" rounded shadow p-6">
         <h2 className="text-3xl font-bold mb-4">Doubt Details</h2>
         <p className="mb-2">
           <strong>Assignment:</strong> {doubt.assignment ? doubt.assignment.title : 'N/A'}
@@ -110,7 +110,7 @@ function DoubtDetail() {
       </div>
 
       {/* Conversation Thread */}
-      <div className="bg-white rounded shadow p-6">
+      <div className=" rounded shadow p-6">
         <h3 className="text-2xl font-bold mb-4">Conversation Thread</h3>
         <div className="space-y-3">
           {doubt.conversation.map((entry, index) => (
@@ -142,7 +142,7 @@ function DoubtDetail() {
 
       {/* Mentor Reply Form */}
       {isMentor && !doubt.resolved && (
-        <div className="bg-white rounded shadow p-6">
+        <div className=" rounded shadow p-6">
           <h3 className="text-2xl font-bold mb-4">Reply to Doubt</h3>
           <form onSubmit={handleMentorReplySubmit} className="space-y-4">
             <textarea

@@ -3,11 +3,11 @@ import React from 'react';
 
 function RecipientDropdown({ recipients, onSelect }) {
   return (
-    <div className="border rounded p-2 mt-2 bg-white shadow max-h-60 overflow-y-auto">
+    <div className="border rounded p-2 mt-2 bg-blue-500 shadow max-h-60 overflow-y-auto">
       {recipients.map((recipient) => (
         <div
           key={recipient._id}
-          className="flex items-center p-1 hover:bg-gray-100 cursor-pointer"
+          className="flex items-center p-1 hover:bg-blue-300 cursor-pointer"
         >
           <input
             type="checkbox"

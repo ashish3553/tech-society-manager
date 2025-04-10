@@ -219,7 +219,7 @@ const handleResponseSubmit = async (responseData) => {
             <AssignmentDisplay assignment={assignment} />
           </div>
           <div className="md:w-1/3 md:pl-4">
-            <div className="bg-white rounded p-4 h-full">
+            <div className=" rounded p-4 h-full">
               <h3 className="text-2xl font-bold mb-4">Your Response</h3>
               <StudentResponseForm 
                 assignmentId={id}
@@ -244,7 +244,7 @@ const handleResponseSubmit = async (responseData) => {
 
       {/* If the mentor clicks the Edit button, show the edit form */}
       {isMentor && isEditingAssignment ? (
-        <div className="bg-white p-6 rounded shadow">
+        <div className=" p-6 rounded shadow">
           <h2 className="text-2xl font-bold mb-4">Edit Assignment</h2>
           <QuestionForm
           isEdit={true} 

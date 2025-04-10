@@ -3,7 +3,7 @@ import React from 'react';
 
 function ContactMessageCard({ message }) {
   return (
-    <div className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+    <div className=" p-4 rounded-lg shadow border border-gray-200 hover:shadow-lg transition-shadow duration-300">
       <h3 className="text-xl font-bold mb-2">{message.name}</h3>
       <p className="text-sm text-gray-600 mb-1">{message.email}</p>
       <p className="text-base text-gray-800 mb-2">{message.message}</p>

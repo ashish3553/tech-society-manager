@@ -51,7 +51,7 @@ const VerifyOTP = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="w-full max-w-md bg-gray-400 rounded-lg shadow-lg p-8 text-center">
         <h2 className="text-2xl font-bold mb-4">Email Verification</h2>
         <p className="mb-4">
           Please enter the OTP sent to your email to verify your account.

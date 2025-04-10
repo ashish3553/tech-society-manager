@@ -141,17 +141,24 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
     setPendingTag('');
   };
 
+
   return (
-    <div className="relative bg-white border border-gray-200 rounded-lg shadow-lg transition-shadow duration-300 p-6 flex flex-col">
+    <div className="relative border bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 border-zinc-700 
+      shadow-lg hover:shadow-2xl hover:shadow-indigo-500/10 
+      hover:border-indigo-500/30 hover:scale-[1.02] 
+      hover:-translate-y-1 
+      transition-all duration-300 ease-out 
+      rounded-lg p-6 flex flex-col
+      hover:bg-gradient-to-br hover:from-zinc-800 hover:via-zinc-900 hover:to-zinc-800">
       {/* Main Content */}
       <div className="space-y-3">
-        <h2 className="text-2xl font-bold text-black-700">{assignment.title}</h2>
+        <h2 className="text-2xl font-bold ">{assignment.title}</h2>
         {assignment.tags && assignment.tags.length > 0 && (
-          <p className="text-sm font-medium text-gray-600">
+          <p className="text-sm font-medium text-gray-400">
             <strong>Tags:</strong> {assignment.tags.join(', ')}
           </p>
         )}
-        <p className="text-sm font-medium text-gray-600">
+        <p className="text-sm font-medium text-gray-400">
           <strong>Difficulty:</strong> {assignment.difficulty}
         </p>
         {(currentUserRole === 'mentor' || currentUserRole === 'admin') && (
@@ -194,22 +201,22 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
             </svg>
           </button>
           {showTagMenu && (
-            <div className="absolute bottom-full right-0 mb-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-10">
+            <div className="absolute bottom-full right-0 mb-2 w-32  border border-gray-200 rounded shadow-lg z-10">
               <button
                 onClick={() => handleTagClick('hw')}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-600"
               >
                 HW
               </button>
               <button
                 onClick={() => handleTagClick('practice')}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-600"
               >
                 Practice
               </button>
               <button
                 onClick={() => handleTagClick('cw')}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-600"
               >
                 CW
               </button>
@@ -240,8 +247,8 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
 
       {/* Confirmation Modal for Tag Change */}
       {showConfirmModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded p-6 w-80">
+        <div className="fixed inset-0 flex items-center justify-center bg-slate-500 bg-opacity-50 z-50">
+          <div className=" rounded p-6 w-80">
             <h2 className="text-xl font-bold mb-4">
               Confirm Tag Change
             </h2>
@@ -252,7 +259,7 @@ function AssignmentCard({ assignment, onUpdate, onDelete, onRefresh }) {
               <button
                 type="button"
                 onClick={cancelTagChange}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors"
+                className="bg-gray-600 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors"
               >
                 Cancel
               </button>

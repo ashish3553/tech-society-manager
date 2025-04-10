@@ -61,7 +61,7 @@ function VolunteerBriefing() {
   };
 
   return (
-    <div className="bg-white rounded shadow p-6 mb-6">
+    <div className=" rounded shadow p-6 mb-6">
       <h2 className="text-2xl font-bold mb-4 text-center text-indigo-700">Volunteer Class Briefing</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

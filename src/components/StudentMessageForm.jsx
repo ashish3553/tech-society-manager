@@ -95,7 +95,7 @@ function StudentMessageForm({ onClose }) {
   };
 
   return (
-    <div className="bg-white rounded shadow p-6 mb-6">
+    <div className="border-2 bg-gray-600 opacity-2 rounded shadow p-6 mb-6">
       <h2 className="text-2xl font-bold mb-4">Send Message</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -138,7 +138,7 @@ function StudentMessageForm({ onClose }) {
               <button
               type="button"
               onClick={() => setShowRecipientsDropdown(true)}
-              className="w-full border rounded p-2 text-left bg-gray-50 hover:bg-gray-100"
+              className="w-full border rounded p-2 text-left  hover:bg-gray-500"
             >
               {messageData.recipients.length > 0
                 ? `Selected (${messageData.recipients.length}) - Click to Change`

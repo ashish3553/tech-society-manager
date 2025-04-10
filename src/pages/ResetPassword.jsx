@@ -32,11 +32,11 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-md  rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Reset Password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700">Email:</label>
+            <label className="block text-gray-500">Email:</label>
             <input 
               type="email"
               value={email}
@@ -46,7 +46,7 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">OTP:</label>
+            <label className="block text-gray-500">OTP:</label>
             <input 
               type="text"
               value={otp}
@@ -67,7 +67,7 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Confirm New Password:</label>
+            <label className="block text-gray-500">Confirm New Password:</label>
             <input 
               type="password"
               value={confirmPassword}

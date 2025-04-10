@@ -25,6 +25,8 @@ import ResetPassword from '../pages/ResetPassword';
 import SolutionReview from '../pages/SolutionReview';
 import StudentSolutions from '../pages/StudentSolutionPage';
 import ProgressReportPage from '../pages/ProgressReportPage';
+import About from '../pages/About';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 function AppRoutes() {
   return (
@@ -32,33 +34,84 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/practice" element={<Practice />} />
       <Route path="/register" element={<Registration />} /> 
       <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-
-
-
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/progress" element={<ProgressReportPage />} />
-      <Route path="/mentor" element={<MentorDashboard />} />
-      <Route path="/assignments" element={<Assignments />} />
-      <Route path="/resourse" element={<Resourse />} />
-      <Route path="/doubts" element={<Doubts/>} />
-      <Route path="/assignments/:id" element={<AssignmentDetails />} />
-      <Route path="/solution/:assignmentId" element={<SolutionEditorPage />} />
-      <Route path="/solutions" element={<SolutionReview />} />
-      <Route path="/Student-solutions" element={<StudentSolutions/>} />
-
-
-      <Route path="/doubts" element={<Doubts />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/doubts/:id" element={<DoubtDetail />} />
-      <Route path="/messages/:id" element={<MessageDetail />} />
+      <Route path="/About" element={<About />} />
 
-      <Route path="/briefings/archive" element={<PreviousBriefings />} />
-
+      {/* Protected Routes - require authentication */}
+      <Route path="/practice" element={
+        <ProtectedRoute>
+          <Practice />
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/progress" element={
+        <ProtectedRoute>
+          <ProgressReportPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/mentor" element={
+        <ProtectedRoute>
+          <MentorDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/assignments" element={
+        <ProtectedRoute>
+          <Assignments />
+        </ProtectedRoute>
+      } />
+      <Route path="/resourse" element={
+        <ProtectedRoute>
+          <Resourse />
+        </ProtectedRoute>
+      } />
+      <Route path="/doubts" element={
+        <ProtectedRoute>
+          <Doubts />
+        </ProtectedRoute>
+      } />
+      <Route path="/assignments/:id" element={
+        <ProtectedRoute>
+          <AssignmentDetails />
+        </ProtectedRoute>
+      } />
+      <Route path="/solution/:assignmentId" element={
+        <ProtectedRoute>
+          <SolutionEditorPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/solutions" element={
+        <ProtectedRoute>
+          <SolutionReview />
+        </ProtectedRoute>
+      } />
+      <Route path="/Student-solutions" element={
+        <ProtectedRoute>
+          <StudentSolutions />
+        </ProtectedRoute>
+      } />
+      <Route path="/doubts/:id" element={
+        <ProtectedRoute>
+          <DoubtDetail />
+        </ProtectedRoute>
+      } />
+      <Route path="/messages/:id" element={
+        <ProtectedRoute>
+          <MessageDetail />
+        </ProtectedRoute>
+      } />
+      <Route path="/briefings/archive" element={
+        <ProtectedRoute>
+          <PreviousBriefings />
+        </ProtectedRoute>
+      } />
 
       {/* Add additional routes as needed */}
     </Routes>

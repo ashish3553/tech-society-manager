@@ -65,7 +65,7 @@ function PreviousArchive() {
   }, [activeTab]);
 
   return (
-    <div className="bg-color container mx-auto p-4 space-y-8">
+    <div className="mx-auto p-4 space-y-8 ">
       <h1 className="text-3xl font-bold mb-6 text-center">Previous Archives</h1>
 
       {/* Toggle Buttons */}
@@ -95,7 +95,7 @@ function PreviousArchive() {
       {activeTab === 'briefings' && (
         <div>
           {/* Filter by month */}
-          <div className="bg-white p-6 rounded shadow mb-6">
+          <div className="p-6 rounded shadow mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Filter by Month
             </label>
@@ -111,8 +111,9 @@ function PreviousArchive() {
               No briefings available for the selected month.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-6 ">
               {briefings.map((briefing) => (
+                
                 <BriefingCard key={briefing._id} briefing={briefing} />
               ))}
             </div>

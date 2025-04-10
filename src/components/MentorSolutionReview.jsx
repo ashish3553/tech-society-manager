@@ -38,7 +38,7 @@ const MentorSolutionReview = ({ assignmentId, studentResponse, onReviewUpdated }
   console.log("Here is initial content:", studentResponse)
 
   return (
-    <div className="bg-white p-4 rounded shadow my-4">
+    <div className=" p-4 rounded shadow my-4">
       <div className=' font-bold text-center text-orange-500 text-4xl mb-4'>Student Solution</div>
       <div className="mb-4">
 
@@ -51,7 +51,7 @@ const MentorSolutionReview = ({ assignmentId, studentResponse, onReviewUpdated }
           initialContent={solutionContent}
         />}
 
-<div className="bg-white p-4 rounded shadow border">
+<div className=" p-4 rounded shadow border">
   <p className="font-semibold mb-2">
     Submitted URL:
     <a 

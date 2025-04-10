@@ -290,7 +290,7 @@ const ReadOnlyReportModal = ({ goal, onClose }) => {
   const bullets = goal && goal.weeklyTarget ? JSON.parse(goal.weeklyTarget) : [];
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white border border-blue-200 rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
+      <div className=" border border-blue-200 rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto relative">
         <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">
           &times;
         </button>
@@ -515,7 +515,7 @@ const ProgressReportPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-color container mx-auto p-4 space-y-8">
+    <div className="min-h-screen mx-auto p-4 space-y-8">
       {/* Disclaimer Section */}
       <Disclaimer />
 
@@ -525,7 +525,7 @@ const ProgressReportPage = () => {
       <section className="mb-8">
         {/* <h2 className="text-2xl font-semibold mb-4 text-blue-800">Current Week Goal</h2> */}
         {currentWeekGoal ? (
-          <div className="border border-gray-300 rounded p-4 bg-white shadow-sm">
+          <div className="border border-orange-300 rounded p-4  shadow-sm">
             <div className="mb-4">
               <h3 className="text-xl font-bold mb-2  text-gray-800">This week plan</h3>
               <ul className="list-disc list-inside text-gray-700">
@@ -588,7 +588,7 @@ const ProgressReportPage = () => {
             </div>
           </div>
         ) : (
-          <div className="border border-gray-300 rounded p-4 bg-white shadow-sm">
+          <div className="border border-gray-300 rounded p-4 shadow-sm">
             <p className="text-gray-500">You have not set a weekly goal for the current week.</p>
             <button
               onClick={() => setShowWeeklyGoalEditor(true)}
@@ -611,7 +611,7 @@ const ProgressReportPage = () => {
               return (
                 <div
                   key={goal._id}
-                  className="border border-gray-300 rounded p-4 cursor-pointer hover:shadow-lg transition-shadow bg-white"
+                  className="border border-gray-300 rounded p-4 cursor-pointer hover:shadow-lg transition-shadow "
                   onClick={() => setShowReadOnlyModal(goal)}
                 >
                   <p className="font-semibold text-gray-800">

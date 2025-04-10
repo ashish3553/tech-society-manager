@@ -29,7 +29,7 @@ function ContactForm() {
   };
 
   return (
-    <div className="p-4 bg-gray-100">
+    <div className="p-4 bg-color bg-gray-100">
       <h2 className="text-lg font-bold mb-2">Contact Us</h2>
       {submitted ? (
         <p className="text-green-600">Thank you for your feedback!</p>
@@ -53,7 +53,7 @@ function ContactForm() {
           />
           <textarea
             placeholder="Your Message"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded h-32"
             value={contactData.message}
             onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
             required

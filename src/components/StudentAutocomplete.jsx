@@ -35,7 +35,7 @@ function StudentAutocomplete({ onSelect }) {
         className="w-full border rounded p-2"
       />
       {suggestions.length > 0 && (
-        <ul className="absolute left-0 right-0 bg-white border rounded mt-1 max-h-60 overflow-auto z-10">
+        <ul className="absolute left-0 right-0 border rounded mt-1 max-h-60 overflow-auto z-10">
           {suggestions.map((student) => (
             <li
               key={student._id}

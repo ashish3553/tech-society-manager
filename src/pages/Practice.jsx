@@ -51,21 +51,21 @@ function Practice() {
   };
 
   return (
-    <div className="bg-color min-h-screen container mx-auto p-4 space-y-8">
+    <div className="min-h-screen mx-auto p-4 space-y-8">
       {/* <h1 className="text-3xl font-bold mb-3 text-center">Practice Questions</h1> */}
       
       {/* Filter Form */}
-      <div className="bg-white p-6 rounded shadow mb-3">
+      <div className="p-6 rounded shadow mb-3">
         <h2 className="text-xl font-bold mb-4">Filter Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Assignment Tag Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Tag:</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Assignment Tag:</label>
             <select
               name="assignmentTag"
               value={filters.assignmentTag}
               onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded p-2"
+              className="w-full border rounded p-2"
             >
               <option value="all">All</option>
               <option value="practice">Practice</option>
@@ -76,7 +76,7 @@ function Practice() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty:</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1">Difficulty:</label>
             <select
               name="difficulty"
               value={filters.difficulty}
@@ -127,7 +127,7 @@ function Practice() {
       </div>
 
       {/* Practice Assignments Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="bg-color grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {assignments.length === 0 ? (
           <p className="text-gray-500 text-center">No practice questions available.</p>
         ) : (

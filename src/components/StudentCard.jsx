@@ -6,8 +6,9 @@ function StudentCard({ student, onUpdate, onDelete }) {
   // name, email, branch, year, role, profileImage, solvedCount, pendingHW
 
   return (
-    <div className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow duration-300">
-      {/* Student Basic Info */}
+<div 
+  className="relative border-2 border-gray-50 p-4 rounded shadow transition-shadow duration-300 ease-in-out hover:shadow-lg hover:z-10"
+>      {/* Student Basic Info */}
       <div className="flex items-center space-x-4">
         {student.profileImage ? (
           <img
@@ -22,9 +23,9 @@ function StudentCard({ student, onUpdate, onDelete }) {
         )}
         <div>
           <h3 className="text-xl font-bold text-indigo-700">{student.name}</h3>
-          <p className="text-sm text-gray-600">{student.email}</p>
-          <p className="text-sm text-gray-600">{student.branch}, {student.year}</p>
-          <p className="text-sm text-gray-600">Role: {student.role}</p>
+          <p className="text-sm text-gray-400">{student.email}</p>
+          <p className="text-sm text-gray-500">{student.branch}, {student.year}</p>
+          <p className="text-sm text-gray-500">Role: {student.role}</p>
         </div>
       </div>
 

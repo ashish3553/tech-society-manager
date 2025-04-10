@@ -101,11 +101,11 @@ function Doubts() {
   }
 
   return (
-    <div className="bg-color min-h-screen container mx-auto p-4 space-y-8">
+    <div className="min-h-screen mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold mb-6">Doubts</h1>
       
       {/* Filter Form */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className=" p-4 rounded shadow mb-6">
         <h2 className="text-xl font-semibold mb-4">Filter Doubts</h2>
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Assignment Tag */}
