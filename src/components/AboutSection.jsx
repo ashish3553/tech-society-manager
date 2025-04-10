@@ -265,9 +265,9 @@ const AboutSection = () => {
       <div className="mt-12 text-center">
         <h3 className="text-2xl font-semibold mb-4">Quick Contact</h3>
         <div className="space-y-2 text-gray-400">
-          <p>General Inquiries: info@codeindia.fun</p>
-          <p>Support: support@codeindia.fun</p>
-          <p>Phone: +91 123-456-7890</p>
+          <p>General Inquiries: <a href="mailto:officialtechsocietypussgrc@gmail.com">officialtechsocietypussgrc@gmail.com</a></p>
+<p>Support: <a href="mailto:officialtechsocietypussgrc@gmail.com">officialtechsocietypussgrc@gmail.com</a></p>
+<p>Phone: <a href="tel:+911234567890">+91 123-456-7890</a></p>
         </div>
       </div>
     </div>
